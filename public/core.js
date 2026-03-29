@@ -9,15 +9,10 @@ let _supabase = null;
 
 function initSupabase() {
     if (_supabase) return;
-    if (window.supabase) {
-        _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        return;
-    }
+    if (window.supabase) { _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); return; }
     const script = document.createElement('script');
     script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
-    script.onload = () => {
-        _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    };
+    script.onload = () => { _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); };
     document.head.appendChild(script);
 }
 initSupabase();
@@ -26,11 +21,9 @@ initSupabase();
 let customers = [];
 window.chitGroups = [];
 
-const state = {
-    user: JSON.parse(localStorage.getItem('finagent_user')) || null,
-};
+const state = { user: JSON.parse(localStorage.getItem('finagent_user')) || null };
 
-// Load from localStorage immediately (synchronous, fast - keeps UI working)
+// Load from localStorage immediately (synchronous)
 function loadData() {
     const savedCustomers = localStorage.getItem('finagent_customers');
     const savedGroups    = localStorage.getItem('finagent_chitGroups');
@@ -48,7 +41,7 @@ function loadData() {
     }
 }
 
-// Save to localStorage + Supabase in background
+// Save to localStorage immediately + sync Supabase in background
 async function saveData() {
     localStorage.setItem('finagent_customers',  JSON.stringify(customers));
     localStorage.setItem('finagent_chitGroups', JSON.stringify(window.chitGroups));
@@ -58,35 +51,26 @@ async function saveData() {
             .from('app_state')
             .upsert({ id: 'global_state', customers: customers, groups: window.chitGroups });
         if (error) console.warn('Supabase sync error:', error.message);
-    } catch (err) {
-        console.warn('Supabase sync failed:', err);
-    }
+    } catch (err) { console.warn('Supabase sync failed:', err); }
 }
 
-// Pull latest from Supabase in background after page loads
+// Pull from Supabase silently after page ready
 async function syncFromSupabase() {
     if (!_supabase) return;
     try {
         const { data, error } = await _supabase
-            .from('app_state')
-            .select('*')
-            .eq('id', 'global_state')
-            .single();
+            .from('app_state').select('*').eq('id', 'global_state').single();
         if (data && !error) {
-            const remoteCustomers = data.customers || [];
-            const remoteGroups    = data.groups    || [];
-            if (remoteCustomers.length > customers.length || remoteGroups.length > window.chitGroups.length) {
-                customers         = remoteCustomers;
-                window.chitGroups = remoteGroups;
+            const rc = data.customers || [], rg = data.groups || [];
+            if (rc.length > customers.length || rg.length > window.chitGroups.length) {
+                customers = rc; window.chitGroups = rg;
                 localStorage.setItem('finagent_customers',  JSON.stringify(customers));
                 localStorage.setItem('finagent_chitGroups', JSON.stringify(window.chitGroups));
                 if (typeof loadAdminData          === 'function') loadAdminData();
                 if (typeof updateCategorizedLists === 'function') updateCategorizedLists();
             }
         }
-    } catch (err) {
-        console.warn('Supabase background sync failed:', err);
-    }
+    } catch (err) { console.warn('Supabase background sync failed:', err); }
 }
 
 function mergeDuplicates() {
@@ -108,10 +92,7 @@ function mergeDuplicates() {
     localStorage.setItem('finagent_customers', JSON.stringify(customers));
 }
 
-function logout() {
-    localStorage.removeItem('finagent_user');
-    window.location.href = 'index.html';
-}
+function logout() { localStorage.removeItem('finagent_user'); window.location.href = 'index.html'; }
 
 function checkAuth(role) {
     if (!state.user) { window.location.href = 'index.html'; return false; }
@@ -119,25 +100,31 @@ function checkAuth(role) {
     return true;
 }
 
-// Run immediately - loads localStorage data synchronously
+// Load data immediately
 loadData();
 
 // --- MODAL INJECTOR ---
+// Inject modals NOW (as soon as body is available) so they are ready before any click
 async function injectModals() {
     try {
         const response = await fetch('modals.html');
         const html     = await response.text();
         const div      = document.createElement('div');
         div.innerHTML  = html;
-        document.body.appendChild(div);
-    } catch (err) {
-        console.error('Failed to inject modals:', err);
-    }
+        // Wait for body if not ready yet
+        if (document.body) {
+            document.body.appendChild(div);
+        } else {
+            document.addEventListener('DOMContentLoaded', () => document.body.appendChild(div));
+        }
+    } catch (err) { console.error('Failed to inject modals:', err); }
 }
 
-// On DOM ready: inject modals, run page UI, then sync Supabase in background
-document.addEventListener('DOMContentLoaded', async () => {
-    await injectModals();
+// Start injecting modals immediately - do not wait for DOMContentLoaded
+injectModals();
+
+// After DOM ready: run page-specific UI + background Supabase sync
+document.addEventListener('DOMContentLoaded', () => {
     if (typeof loadAdminData          === 'function') loadAdminData();
     if (typeof updateCategorizedLists === 'function') updateCategorizedLists();
     setTimeout(syncFromSupabase, 1500);
@@ -162,16 +149,16 @@ window.showPopup = function(options) {
         confirmBtn.innerText = options.confirmText || (options.type === 'alert' ? 'OK' : 'Confirm');
         if (options.type === 'alert') {
             cancelBtn.classList.add('hidden');
-            iconEl.innerHTML        = '<i class="fa-solid fa-circle-info" style="color: var(--primary-color)"></i>';
+            iconEl.innerHTML = '<i class="fa-solid fa-circle-info" style="color: var(--primary-color)"></i>';
             confirmBtn.style.background = 'var(--primary-color)';
         } else {
             cancelBtn.classList.remove('hidden');
             cancelBtn.innerText = options.cancelText || 'Cancel';
             if (options.isDanger) {
-                iconEl.innerHTML        = '<i class="fa-solid fa-circle-exclamation" style="color: var(--danger-color)"></i>';
+                iconEl.innerHTML = '<i class="fa-solid fa-circle-exclamation" style="color: var(--danger-color)"></i>';
                 confirmBtn.style.background = 'var(--danger-color)';
             } else {
-                iconEl.innerHTML        = '<i class="fa-solid fa-circle-question" style="color: var(--primary-color)"></i>';
+                iconEl.innerHTML = '<i class="fa-solid fa-circle-question" style="color: var(--primary-color)"></i>';
                 confirmBtn.style.background = 'var(--primary-color)';
             }
         }
