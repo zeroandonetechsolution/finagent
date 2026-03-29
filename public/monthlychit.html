@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Monthly Chit - FinAgent Pro</title>
+    <link rel="stylesheet" href="style.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  </head>
+  <body>
+    <div id="app">
+      <section id="admin-dashboard-view" class="view active">
+        <aside class="sidebar">
+          <div class="brand"><i class="fa-solid fa-coins"></i> FinAgent</div>
+                                                  <nav>
+            <a href="admin.html" class="nav-btn "><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+            <a href="allcustomers.html" class="nav-btn "><i class="fa-solid fa-users"></i> All Customers</a>
+            
+            <div class="nav-label" style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin: 15px 0 5px 10px; opacity: 0.7; font-weight: 600;">Finance</div>
+            <a href="weeklycust.html" class="nav-btn "><i class="fa-solid fa-calendar-week"></i> Weekly Finance</a>
+            <a href="monthlycust.html" class="nav-btn "><i class="fa-solid fa-calendar-days"></i> Monthly Finance</a>
+            <a href="monthlyinterest.html" class="nav-btn "><i class="fa-solid fa-hand-holding-dollar"></i> Monthly Interest</a>
+            
+            <div class="nav-label" style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin: 15px 0 5px 10px; opacity: 0.7; font-weight: 600;">Savings</div>
+            <a href="diwalichit.html" class="nav-btn "><i class="fa-solid fa-burst"></i> Diwali Chit</a>
+            <a href="pongalchit.html" class="nav-btn "><i class="fa-solid fa-bowl-rice"></i> Pongal Chit</a>
+            <a href="monthlychit.html" class="nav-btn active"><i class="fa-solid fa-calendar-check"></i> Monthly Chit</a>
+            
+            <div class="nav-label" style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin: 15px 0 5px 10px; opacity: 0.7; font-weight: 600;">Normal Due</div>
+            <a href="riceaccount.html" class="nav-btn "><i class="fa-solid fa-bucket"></i> Rice Account</a>
+            
+            <div style="margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 15px;"></div>
+            <a href="transactions.html" class="nav-btn "><i class="fa-solid fa-receipt"></i> Transactions</a>
+            <a href="passbook.html" class="nav-btn "><i class="fa-solid fa-book-open"></i> Customer Passbook</a>
+            
+            <div class="nav-label" style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin: 15px 0 5px 10px; opacity: 0.7; font-weight: 600;">History</div>
+            <a href="activeusers.html" class="nav-btn "><i class="fa-solid fa-user-check"></i> Active Users</a>
+            <a href="inactiveusers.html" class="nav-btn "><i class="fa-solid fa-user-minus"></i> Inactive Users</a>
+
+            <button class="nav-btn logout" style="margin-top: 15px;" onclick="logout()"><i class="fa-solid fa-sign-out-alt"></i> Logout</button>
+          </nav>
+        </aside>
+
+        <main class="main-content">
+          <header>
+            <h2>Monthly Chit Management</h2>
+            <div class="user-profile">
+              <button class="primary-btn small" onclick="window.openAddChitGroupModal('Monthly Chit')">
+                <i class="fa-solid fa-plus-circle"></i> Add Group
+              </button>
+            </div>
+          </header>
+
+          <!-- Group List View -->
+          <div id="chit-groups-view" class="admin-section active">
+            <div class="section-header">
+              <h3>Chit Groups</h3>
+            </div>
+            <div id="chit-groups-grid" class="stats-grid" style="grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-top: 15px;">
+              <!-- Groups will be injected here -->
+            </div>
+          </div>
+
+          <!-- Group Members View (Initially Hidden) -->
+          <div id="chit-members-view" class="admin-section" style="display: none;">
+            <div class="section-header" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+              <div style="display:flex; align-items:center; gap: 15px;">
+                <button class="secondary-btn small" onclick="window.showChitGroups()" style="padding: 10px;">
+                  <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <h3 id="selected-group-name" style="margin:0;">Group Members</h3>
+              </div>
+              <button class="primary-btn small" onclick="window.openAddGroupMemberModal()">
+                <i class="fa-solid fa-user-plus"></i> Add Member
+              </button>
+            </div>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr><th>Name</th><th>Phone</th><th>Due / Value</th><th>Actions</th><th>User Activity</th></tr>
+                </thead>
+                <tbody id="monthly-chit-customer-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </main>
+      </section>
+    </div>
+
+    <script src="core.js"></script>
+    <script src="script.js"></script>
+    <script>
+      checkAuth('admin');
+      // No longer calling updateCategorizedLists here.
+      // script.js will handle showChitGroups() on DOMContentLoaded
+    </script>
+  </body>
+</html>

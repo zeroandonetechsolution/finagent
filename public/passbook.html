@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Customer Passbook - FinAgent Pro</title>
+    <link rel="stylesheet" href="style.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <style>
+      .pb-search-wrap {
+        position: relative;
+        max-width: 420px;
+        margin-bottom: 24px;
+      }
+      .pb-search-wrap i {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-secondary);
+      }
+      #pb-search {
+        width: 100%;
+        padding: 11px 14px 11px 40px;
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+        background: var(--card-bg);
+        color: var(--text-primary);
+        font-size: 0.95rem;
+        outline: none;
+        transition: border-color .2s;
+      }
+      #pb-search:focus { border-color: var(--primary-color); }
+      .pb-dropdown {
+        position: absolute;
+        top: calc(100% + 6px);
+        left: 0; right: 0;
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        z-index: 100;
+        max-height: 220px;
+        overflow-y: auto;
+        box-shadow: 0 8px 32px rgba(0,0,0,.35);
+        display: none;
+      }
+      .pb-dropdown.open { display: block; }
+      .pb-option {
+        padding: 11px 16px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: .92rem;
+        transition: background .15s;
+      }
+      .pb-option:hover { background: rgba(255,255,255,.06); }
+      .pb-option .av {
+        width: 32px; height: 32px; border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary-color), #8b5cf6);
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 700; color: #fff; font-size: .85rem; flex-shrink: 0;
+      }
+
+      /* Passbook view */
+      #pb-view { display: none; }
+      #pb-view.active { display: block; }
+
+      .pb-header-card {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        padding: 22px 26px;
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        margin-bottom: 24px;
+      }
+      .pb-avatar {
+        width: 60px; height: 60px; border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary-color), #8b5cf6);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.6rem; font-weight: 700; color: #fff; flex-shrink: 0;
+      }
+      .pb-info h2 { margin: 0 0 4px; font-size: 1.25rem; }
+      .pb-info p  { margin: 0; color: var(--text-secondary); font-size: .88rem; }
+      .pb-back {
+        margin-left: auto;
+        background: none;
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        color: var(--text-secondary);
+        padding: 8px 16px;
+        cursor: pointer;
+        font-size: .85rem;
+        transition: all .2s;
+      }
+      .pb-back:hover { border-color: var(--primary-color); color: var(--primary-color); }
+
+      /* Accounts grid */
+      .pb-accounts-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+        gap: 16px;
+        margin-bottom: 28px;
+      }
+      .pb-acc-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 14px;
+        padding: 18px 20px;
+        position: relative;
+        overflow: hidden;
+      }
+      .pb-acc-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 3px;
+        background: var(--primary-color);
+        border-radius: 14px 14px 0 0;
+      }
+      .pb-acc-card h4 {
+        margin: 0 0 12px;
+        font-size: .9rem;
+        color: var(--primary-color);
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+      .pb-acc-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: .82rem;
+        margin-bottom: 6px;
+        color: var(--text-secondary);
+      }
+      .pb-acc-row strong { color: var(--text-primary); }
+
+      /* Type color bars */
+      .pb-acc-card[data-type="Monthly Finance"]::before { background: #818cf8; }
+      .pb-acc-card[data-type="Weekly Finance"]::before  { background: #4ade80; }
+      .pb-acc-card[data-type="Pongal Chit"]::before     { background: #fb923c; }
+      .pb-acc-card[data-type="Diwali Chit"]::before     { background: #fb7185; }
+      .pb-acc-card[data-type="Rice Account"]::before    { background: #facc15; }
+      .pb-acc-card[data-type="Monthly Chit"]::before    { background: #c084fc; }
+      .pb-acc-card[data-type="Chit Fund"]::before       { background: #38bdf8; }
+
+      /* Progress bar */
+      .pb-progress-bar {
+        height: 5px;
+        background: rgba(255,255,255,.08);
+        border-radius: 10px;
+        margin-top: 10px;
+        overflow: hidden;
+      }
+      .pb-progress-fill {
+        height: 100%;
+        border-radius: 10px;
+        background: var(--primary-color);
+        transition: width .5s;
+      }
+
+      /* Transactions */
+      .pb-section-title {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .pb-tx-list { list-style: none; padding: 0; margin: 0; }
+      .pb-tx-item {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 12px 16px;
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        margin-bottom: 8px;
+      }
+      .pb-tx-icon {
+        width: 36px; height: 36px; border-radius: 50%;
+        background: rgba(99,102,241,.15);
+        display: flex; align-items: center; justify-content: center;
+        color: #818cf8; font-size: .85rem; flex-shrink: 0;
+      }
+      .pb-tx-desc { flex: 1; font-size: .88rem; }
+      .pb-tx-desc small { color: var(--text-secondary); font-size: .76rem; }
+      .pb-tx-amount { font-weight: 700; color: #4ade80; font-size: .95rem; }
+
+      /* Empty state */
+      .pb-empty {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--text-secondary);
+      }
+      .pb-empty i { font-size: 3rem; opacity: .2; display: block; margin-bottom: 14px; }
+
+      .pb-no-accounts {
+        text-align: center;
+        padding: 30px;
+        color: var(--text-secondary);
+        background: var(--card-bg);
+        border: 1px dashed var(--border-color);
+        border-radius: 14px;
+        margin-bottom: 24px;
+        font-size: .9rem;
+      }
+
+      /* Customer Select Grid */
+      .customer-select-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 16px;
+        margin-top: 10px;
+      }
+      .cust-select-btn {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        padding: 16px;
+        border-radius: 14px;
+        text-align: center;
+        transition: all 0.2s;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+      }
+      .cust-select-btn:hover {
+        border-color: var(--primary-color);
+        background: rgba(79, 70, 229, 0.05);
+        transform: translateY(-2px);
+      }
+      .cust-select-btn .cv {
+        width: 40px; height: 40px; border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary-color), #8b5cf6);
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 700; color: #fff;
+      }
+      .cust-select-btn span {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: var(--text-primary);
+      }
+      .cust-select-btn small {
+        color: var(--text-secondary);
+        font-size: 0.75rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <section id="admin-dashboard-view" class="view active">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+          <div class="brand"><i class="fa-solid fa-coins"></i> FinAgent</div>
+                                                  <nav>
+            <a href="admin.html" class="nav-btn "><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+            <a href="allcustomers.html" class="nav-btn "><i class="fa-solid fa-users"></i> All Customers</a>
+            
+            <div class="nav-label" style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin: 15px 0 5px 10px; opacity: 0.7; font-weight: 600;">Finance</div>
+            <a href="weeklycust.html" class="nav-btn "><i class="fa-solid fa-calendar-week"></i> Weekly Finance</a>
+            <a href="monthlycust.html" class="nav-btn "><i class="fa-solid fa-calendar-days"></i> Monthly Finance</a>
+            <a href="monthlyinterest.html" class="nav-btn "><i class="fa-solid fa-hand-holding-dollar"></i> Monthly Interest</a>
+            
+            <div class="nav-label" style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin: 15px 0 5px 10px; opacity: 0.7; font-weight: 600;">Savings</div>
+            <a href="diwalichit.html" class="nav-btn "><i class="fa-solid fa-burst"></i> Diwali Chit</a>
+            <a href="pongalchit.html" class="nav-btn "><i class="fa-solid fa-bowl-rice"></i> Pongal Chit</a>
+            <a href="monthlychit.html" class="nav-btn "><i class="fa-solid fa-calendar-check"></i> Monthly Chit</a>
+            
+            <div class="nav-label" style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin: 15px 0 5px 10px; opacity: 0.7; font-weight: 600;">Normal Due</div>
+            <a href="riceaccount.html" class="nav-btn "><i class="fa-solid fa-bucket"></i> Rice Account</a>
+            
+            <div style="margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 15px;"></div>
+            <a href="transactions.html" class="nav-btn "><i class="fa-solid fa-receipt"></i> Transactions</a>
+            <a href="passbook.html" class="nav-btn active"><i class="fa-solid fa-book-open"></i> Customer Passbook</a>
+            
+            <div class="nav-label" style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin: 15px 0 5px 10px; opacity: 0.7; font-weight: 600;">History</div>
+            <a href="activeusers.html" class="nav-btn "><i class="fa-solid fa-user-check"></i> Active Users</a>
+            <a href="inactiveusers.html" class="nav-btn "><i class="fa-solid fa-user-minus"></i> Inactive Users</a>
+
+            <button class="nav-btn logout" style="margin-top: 15px;" onclick="logout()"><i class="fa-solid fa-sign-out-alt"></i> Logout</button>
+          </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+          <header>
+            <h2><i class="fa-solid fa-book-open" style="color:var(--primary-color);margin-right:10px;"></i>Customer Passbook</h2>
+          </header>
+
+          <div class="admin-section active">
+
+            <!-- Search/Select Customer -->
+            <div id="pb-select-section">
+              <p style="color:var(--text-secondary);margin-bottom:14px;">Search and select a customer to view their passbook.</p>
+              <div class="pb-search-wrap">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input id="pb-search" type="text" placeholder="Type customer name or phone…" autocomplete="off" oninput="pbSearch()" onfocus="pbSearch()" />
+                <div class="pb-dropdown" id="pb-dropdown"></div>
+              </div>
+
+              <!-- Customer Selection Grid (Dynamic) -->
+              <div id="pb-selection-grid" class="customer-select-grid"></div>
+            </div>
+
+            <!-- Passbook View -->
+            <div id="pb-view">
+              <div class="pb-header-card">
+                <div class="pb-avatar" id="pbav"></div>
+                <div class="pb-info">
+                  <h2 id="pb-name"></h2>
+                  <p id="pb-meta"></p>
+                </div>
+                <button class="pb-back" onclick="pbClear()"><i class="fa-solid fa-arrow-left"></i> Back</button>
+              </div>
+
+              <!-- Accounts -->
+              <div class="pb-section-title"><i class="fa-solid fa-layer-group" style="color:var(--primary-color)"></i> Finance Accounts</div>
+              <div class="pb-accounts-grid" id="pb-accounts"></div>
+
+              <!-- Transactions -->
+              <div class="pb-section-title" style="margin-top:8px;"><i class="fa-solid fa-arrow-right-arrow-left" style="color:var(--primary-color)"></i> Transaction History</div>
+              <ul class="pb-tx-list" id="pb-transactions"></ul>
+            </div>
+
+          </div>
+        </main>
+      </section>
+    </div>
+
+    <script src="core.js"></script>
+    <script src="script.js"></script>
+    <script>
+      checkAuth('admin');
+
+      const TYPE_ICONS = {
+        'Monthly Finance': 'fa-calendar-days',
+        'Weekly Finance':  'fa-calendar-week',
+        'Pongal Chit':     'fa-bowl-rice',
+        'Diwali Chit':     'fa-burst',
+        'Rice Account':    'fa-bucket',
+        'Monthly Chit':    'fa-calendar-check',
+      };
+
+      // ---- Customer Selection List ----
+      function renderCustomerList() {
+        const grid = document.getElementById('pb-selection-grid');
+        if (!grid) return;
+        
+        if (customers.length === 0) {
+          grid.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding: 40px; color: var(--text-secondary);">No customers found.</div>';
+          return;
+        }
+
+        grid.innerHTML = customers.map((c, i) => `
+          <div class="cust-select-btn" onclick="pbLoad(${i})">
+            <div class="cv">${(c.name || '?')[0].toUpperCase()}</div>
+            <span>${c.name}</span>
+            <small>${c.phone || ''}</small>
+          </div>
+        `).join('');
+      }
+
+      // Initial render
+      renderCustomerList();
+
+      // ---- Search dropdown ----
+      function pbSearch() {
+        const q = (document.getElementById('pb-search').value || '').toLowerCase().trim();
+        const dd = document.getElementById('pb-dropdown');
+        
+        if (!q) {
+          dd.classList.remove('open');
+          return;
+        }
+
+        const pool = customers.filter(c =>
+          (c.name || '').toLowerCase().includes(q) || (c.phone || '').includes(q)
+        ).slice(0, 10);
+
+        if (pool.length === 0) {
+          dd.innerHTML = '<div class="pb-option" style="cursor:default;opacity:0.5;">No customers found.</div>';
+          dd.classList.add('open');
+          return;
+        }
+
+        dd.innerHTML = pool.map((c, i) => {
+          const idx = customers.indexOf(c);
+          return `<div class="pb-option" onclick="pbLoad(${idx})">
+            <div class="av">${(c.name||'?')[0].toUpperCase()}</div>
+            <div><strong>${c.name}</strong><br><small style="color:var(--text-secondary)">${c.phone||''}</small></div>
+          </div>`;
+        }).join('');
+        dd.classList.add('open');
+      }
+
+      // Close dropdown on outside click
+      document.addEventListener('click', e => {
+        if (!e.target.closest('.pb-search-wrap')) {
+          document.getElementById('pb-dropdown').classList.remove('open');
+        }
+      });
+
+      function pbClear() {
+        document.getElementById('pb-view').classList.remove('active');
+        document.getElementById('pb-select-section').style.display = 'block';
+        document.getElementById('pb-search').value = '';
+        renderCustomerList(); // Refresh list if needed
+      }
+
+      // ---- Load passbook ----
+      function pbLoad(idx) {
+        const c = customers[idx];
+        if (!c) return;
+        document.getElementById('pb-dropdown').classList.remove('open');
+        document.getElementById('pb-search').value = c.name;
+        document.getElementById('pb-select-section').style.display = 'none';
+
+        // Header
+        document.getElementById('pbav').textContent = (c.name||'?')[0].toUpperCase();
+        document.getElementById('pb-name').textContent = c.name;
+        document.getElementById('pb-meta').textContent =
+          `📞 ${c.phone||'—'}  |  📍 ${c.address||'—'}  |  🏦 ${c.accountNo ? c.accountNo : 'No bank on file'}`;
+
+        // Accounts
+        const accGrid = document.getElementById('pb-accounts');
+        const accounts = c.financeAccounts || [];
+        if (accounts.length === 0) {
+          accGrid.innerHTML = '<div class="pb-no-accounts"><i class="fa-solid fa-folder-open" style="margin-right:8px;opacity:.4;"></i>No finance accounts set up yet.</div>';
+        } else {
+          accGrid.innerHTML = '';
+          accounts.forEach((acc, i) => {
+            const icon = TYPE_ICONS[acc.type] || 'fa-coins';
+            const total    = parseInt(acc.duration) || 1;
+            const due      = parseFloat(acc.monthlyDue || acc.weeklyDue || 0);
+            const start    = new Date(acc.startDate);
+            const today    = new Date();
+            let passed = 0;
+            if (acc.type === 'Weekly Finance') {
+              passed = Math.floor(Math.abs(today - start) / (1000*60*60*24*7));
+            } else {
+              passed = (today.getFullYear() - start.getFullYear()) * 12 + (today.getMonth() - start.getMonth());
+            }
+            passed = Math.max(0, Math.min(passed, total));
+            const remaining = total - passed;
+            const pct = Math.round((passed / total) * 100);
+            const period = acc.type === 'Weekly Finance' ? 'wk' : 'mo';
+
+            const card = document.createElement('div');
+            card.className = 'pb-acc-card';
+            card.setAttribute('data-type', acc.type);
+            card.innerHTML = `
+              <h4><i class="fa-solid ${icon}"></i> ${acc.type} #${i+1}</h4>
+              <div class="pb-acc-row"><span>Loan Amount</span><strong>₹${(parseFloat(acc.loanAmount)||0).toLocaleString()}</strong></div>
+              <div class="pb-acc-row"><span>Due / ${period}</span><strong>₹${due.toLocaleString()}</strong></div>
+              <div class="pb-acc-row"><span>Duration</span><strong>${total} ${period}</strong></div>
+              <div class="pb-acc-row"><span>Paid</span><strong>${passed} ${period}</strong></div>
+              <div class="pb-acc-row"><span>Remaining</span><strong style="color:#fb923c;">${remaining} ${period}</strong></div>
+              <div class="pb-acc-row"><span>Pending Dues</span><strong style="color:#fb7185;">₹${(remaining * due).toLocaleString()}</strong></div>
+              <div class="pb-acc-row"><span>Start Date</span><strong>${acc.startDate || '—'}</strong></div>
+              <div class="pb-progress-bar"><div class="pb-progress-fill" style="width:${pct}%"></div></div>
+              <div style="text-align:right;font-size:.72rem;color:var(--text-secondary);margin-top:4px;">${pct}% complete</div>
+            `;
+            accGrid.appendChild(card);
+          });
+        }
+
+        // Transactions
+        const txList = document.getElementById('pb-transactions');
+        const txs = c.transactions || [];
+        if (txs.length === 0) {
+          txList.innerHTML = '<li style="text-align:center;padding:20px;color:var(--text-secondary);">No transactions recorded.</li>';
+        } else {
+          txList.innerHTML = txs.map(tx => `
+            <li class="pb-tx-item">
+              <div class="pb-tx-icon"><i class="fa-solid fa-arrow-down-to-line"></i></div>
+              <div class="pb-tx-desc">
+                <div>${tx.type || 'Payment'}</div>
+                <small>${tx.date || '—'}</small>
+              </div>
+              <div class="pb-tx-amount">+₹${(tx.amount||0).toLocaleString()}</div>
+            </li>
+          `).join('');
+        }
+
+        document.getElementById('pb-view').classList.add('active');
+      }
+    </script>
+  </body>
+</html>

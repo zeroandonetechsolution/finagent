@@ -1,0 +1,526 @@
+<!-- SHARED MODALS -->
+<!-- CUSTOMER DETAILS MODAL -->
+<div id="customer-details-modal" class="modal hidden">
+  <div class="modal-content" style="max-width: 800px">
+    <span class="close-btn" onclick="closeModal('customer-details-modal')"><i class="fa-solid fa-xmark"></i></span>
+    <div class="details-header" style="margin-bottom: 25px; display: flex; justify-content: space-between; align-items: flex-start; padding-right: 50px;">
+      <div>
+        <h2 id="details-customer-name">Customer Name</h2>
+        <p id="details-customer-info" style="color: var(--text-secondary)">Phone: --- | Address: ---</p>
+      </div>
+      <button id="edit-details-btn" class="primary-btn small" style="width: auto;"><i class="fa-solid fa-pen-to-square"></i> Edit Details</button>
+    </div>
+    <div class="details-grid">
+      <div class="details-card highlight-card">
+        <h4><i class="fa-solid fa-address-card"></i> Personal Details</h4>
+        <div id="details-personal-info" class="personal-info-grid"></div>
+      </div>
+      <div class="details-card">
+        <h4><i class="fa-solid fa-calendar-week"></i> Weekly Finance</h4>
+        <div id="details-weekly-list" class="mini-list"></div>
+      </div>
+      <div class="details-card">
+        <h4><i class="fa-solid fa-calendar-days"></i> Monthly Finance</h4>
+        <div id="details-monthly-list" class="mini-list"></div>
+      </div>
+      <div class="details-card">
+        <h4><i class="fa-solid fa-burst"></i> Diwali Chit</h4>
+        <div id="details-diwali-list" class="mini-list"></div>
+      </div>
+      <div class="details-card">
+        <h4><i class="fa-solid fa-bowl-rice"></i> Pongal Chit</h4>
+        <div id="details-pongal-list" class="mini-list"></div>
+      </div>
+      <div class="details-card">
+        <h4><i class="fa-solid fa-calendar-check"></i> Monthly Chit</h4>
+        <div id="details-monthly-chit-list" class="mini-list"></div>
+      </div>
+      <div class="details-card">
+        <h4><i class="fa-solid fa-bucket"></i> Rice Account</h4>
+        <div id="details-rice-list" class="mini-list"></div>
+      </div>
+      <div class="details-card highlight-card" style="grid-column: 1 / -1; background: rgba(0,0,0,0.3); border-color: var(--primary-color);">
+        <h4><i class="fa-solid fa-clock-rotate-left"></i> Completed History (Past Accounts)</h4>
+        <div id="details-past-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; margin-top: 15px;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Customer Modal -->
+<div id="add-customer-modal" class="modal hidden">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeModal('add-customer-modal')"><i class="fa-solid fa-xmark"></i></span>
+    <h3>Add New Customer</h3>
+    <form id="add-customer-form" onsubmit="handleAddCustomer(event)">
+      <input type="hidden" id="add-customer-default-type" name="defaultType" value="" />
+      <div class="form-group"><label>Full Name</label><input type="text" name="name" required /></div>
+      <div class="form-row">
+        <div class="form-group"><label>Mobile Number (Log-in)</label><input type="tel" name="phone" id="add-phone" required /></div>
+        <div class="form-group">
+          <label>Phone Number (Optional)</label>
+          <input type="tel" name="altPhone" id="add-altPhone" />
+          <div style="display:flex;align-items:center;gap:6px;margin-top:6px;cursor:pointer;" onclick="toggleSync('add', 'altPhone')">
+            <input type="checkbox" id="add-sync-altPhone" style="width:14px;height:14px;pointer-events:none;">
+            <span style="font-size:0.8rem;color:var(--text-secondary)">Same as Mobile</span>
+          </div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>WhatsApp Number</label>
+          <input type="tel" name="whatsapp" id="add-whatsapp" />
+          <div style="display:flex;align-items:center;gap:6px;margin-top:6px;cursor:pointer;" onclick="toggleSync('add', 'whatsapp')">
+            <input type="checkbox" id="add-sync-whatsapp" style="width:14px;height:14px;pointer-events:none;">
+            <span style="font-size:0.8rem;color:var(--text-secondary)">Same as Mobile</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>GPay Number</label>
+          <input type="tel" name="gpay" id="add-gpay" />
+          <div style="display:flex;align-items:center;gap:6px;margin-top:6px;cursor:pointer;" onclick="toggleSync('add', 'gpay')">
+            <input type="checkbox" id="add-sync-gpay" style="width:14px;height:14px;pointer-events:none;">
+            <span style="font-size:0.8rem;color:var(--text-secondary)">Same as Mobile</span>
+          </div>
+        </div>
+      </div>
+      <div class="form-group"><label>Address</label><textarea name="address" rows="2"></textarea></div>
+      <div class="form-row">
+        <div class="form-group"><label>Account Number (Optional)</label><input type="text" name="accountNo" /></div>
+        <div class="form-group">
+          <label>IFSC Code (Optional)</label>
+          <div style="display:flex;gap:8px;">
+            <input type="text" name="ifsc" id="add-ifsc" style="flex:1" placeholder="e.g. SBIN0000691" />
+            <button type="button" class="secondary-btn" onclick="verifyIFSC('add-ifsc')" style="padding:0 15px;height:42px;">Verify</button>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;">
+            <small id="add-ifsc-info" style="color:var(--primary-color);font-weight:500;"></small>
+            <a href="javascript:void(0)" onclick="openIFSCFinder('add-ifsc')" style="font-size:0.75rem;color:var(--primary-color);text-decoration:none;">Find IFSC?</a>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Login Password</label>
+        <input type="text" name="password" id="add-password" value="123456" readonly required />
+        <div style="display:flex;align-items:center;gap:6px;margin-top:6px;cursor:pointer;" onclick="window.toggleDefaultPassword && window.toggleDefaultPassword()">
+          <input type="checkbox" id="add-use-default-password" checked style="width:14px;height:14px;pointer-events:none;">
+          <span style="font-size:0.8rem;color:var(--text-secondary)">Use Default Password (123456)</span>
+        </div>
+      </div>
+      <button type="submit" class="primary-btn">Save Customer</button>
+    </form>
+  </div>
+</div>
+
+<!-- Edit Customer Modal -->
+<div id="edit-customer-modal" class="modal hidden">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeModal('edit-customer-modal')"><i class="fa-solid fa-xmark"></i></span>
+    <h3>Edit Customer</h3>
+    <form id="edit-customer-form" onsubmit="handleEditCustomer(event)">
+      <input type="hidden" name="index" id="edit-index" />
+      <div class="form-group"><label>Full Name</label><input type="text" name="name" id="edit-name" required /></div>
+      <div class="form-row">
+        <div class="form-group"><label>Mobile Number (Log-in)</label><input type="tel" name="phone" id="edit-phone" required /></div>
+        <div class="form-group">
+          <label>Phone Number (Optional)</label>
+          <input type="tel" name="altPhone" id="edit-altPhone" />
+          <div style="display:flex;align-items:center;gap:6px;margin-top:6px;cursor:pointer;" onclick="toggleSync('edit', 'altPhone')">
+            <input type="checkbox" id="edit-sync-altPhone" style="width:14px;height:14px;pointer-events:none;">
+            <span style="font-size:0.8rem;color:var(--text-secondary)">Same as Mobile</span>
+          </div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>WhatsApp Number</label>
+          <input type="tel" name="whatsapp" id="edit-whatsapp" />
+          <div style="display:flex;align-items:center;gap:6px;margin-top:6px;cursor:pointer;" onclick="toggleSync('edit', 'whatsapp')">
+            <input type="checkbox" id="edit-sync-whatsapp" style="width:14px;height:14px;pointer-events:none;">
+            <span style="font-size:0.8rem;color:var(--text-secondary)">Same as Mobile</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>GPay Number</label>
+          <input type="tel" name="gpay" id="edit-gpay" />
+          <div style="display:flex;align-items:center;gap:6px;margin-top:6px;cursor:pointer;" onclick="toggleSync('edit', 'gpay')">
+            <input type="checkbox" id="edit-sync-gpay" style="width:14px;height:14px;pointer-events:none;">
+            <span style="font-size:0.8rem;color:var(--text-secondary)">Same as Mobile</span>
+          </div>
+        </div>
+      </div>
+      <div class="form-group"><label>Address</label><textarea name="address" id="edit-address" rows="2"></textarea></div>
+      <div class="form-row">
+        <div class="form-group"><label>Account Number (Optional)</label><input type="text" name="accountNo" id="edit-accountNo" /></div>
+        <div class="form-group">
+          <label>IFSC Code (Optional)</label>
+          <div style="display:flex;gap:8px;">
+            <input type="text" name="ifsc" id="edit-ifsc" style="flex:1" placeholder="e.g. SBIN0000691" />
+            <button type="button" class="secondary-btn" onclick="verifyIFSC('edit-ifsc')" style="padding:0 15px;height:42px;">Verify</button>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;">
+            <small id="edit-ifsc-info" style="color:var(--primary-color);font-weight:500;"></small>
+            <a href="javascript:void(0)" onclick="openIFSCFinder('edit-ifsc')" style="font-size:0.75rem;color:var(--primary-color);text-decoration:none;">Find IFSC?</a>
+          </div>
+        </div>
+      </div>
+      <div class="form-group"><label>Login Password</label><input type="password" name="password" id="edit-password" required /></div>
+      <button type="submit" class="primary-btn">Update Customer</button>
+    </form>
+  </div>
+</div>
+
+<!-- Create Chit Group Modal -->
+<div id="create-chit-modal" class="modal hidden">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeModal('create-chit-modal')"><i class="fa-solid fa-xmark"></i></span>
+    <h3>Create New Chit Group</h3>
+    <form id="create-chit-form" onsubmit="handleCreateChit(event)">
+      <div class="form-group"><label>Group Name</label><input type="text" name="groupName" required /></div>
+      <div class="form-group"><label>Total Value (₹)</label><input type="number" name="totalValue" required /></div>
+      <div class="form-row">
+        <div class="form-group"><label>Months</label><input type="number" name="months" required /></div>
+        <div class="form-group"><label>Max Members</label><input type="number" name="membersCount" required /></div>
+      </div>
+      <button type="submit" class="primary-btn">Create Group</button>
+    </form>
+  </div>
+</div>
+
+<!-- Add Due Modal -->
+<div id="add-due-modal" class="modal hidden">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal('add-due-modal')"><i class="fa-solid fa-xmark"></i></span>
+        <h3>Add Due Amount</h3>
+        <p id="add-due-customer-name" style="color: var(--text-secondary); margin-bottom: 15px;"></p>
+        <form id="add-due-form" onsubmit="handleAddDue(event)">
+            <input type="hidden" name="index" id="due-index">
+            <input type="number" name="amount" placeholder="Amount (₹)" min="0" required>
+            <input type="text" name="description" placeholder="Description" required>
+            <input type="date" name="dueDate" required>
+            <button type="submit" class="primary-btn" style="background: var(--danger-color)">Add Due</button>
+        </form>
+    </div>
+</div>
+
+<!-- Dynamic Finance Setup Modal -->
+<div id="finance-setup-modal" class="modal hidden">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal('finance-setup-modal')"><i class="fa-solid fa-xmark"></i></span>
+        <div class="modal-header">
+            <h2 id="finance-setup-title">Setup Finance Account</h2>
+        </div>
+        <form id="finance-setup-form" onsubmit="window.handleFinanceSubmit(event)">
+            <input type="hidden" id="setup-cust-index">
+            <input type="hidden" id="setup-finance-type">
+            <div id="finance-loan-group" class="form-group">
+                <label id="finance-loan-label">Loan Amount (Principal)</label>
+                <input type="number" name="loanAmount" id="finance-loan-input" required oninput="window.generatePreview && window.generatePreview()">
+            </div>
+            <div id="dynamic-fields"></div>
+            <div class="form-group" id="finance-date-group">
+                <label>Starting Date (Assigned Date)</label>
+                <input type="date" name="startDate" id="finance-date-input" required onchange="window.generatePreview && window.generatePreview()">
+            </div>
+            <div id="finance-preview-container" style="display: none; margin-bottom: 20px; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 8px;">
+                <div style="font-weight: 600; font-size: 0.85rem; color: var(--primary-color); margin-bottom: 10px;">Generated Due Dates:</div>
+                <div id="finance-dates-list" style="max-height: 120px; overflow-y: auto; font-size: 0.8rem; color: var(--text-secondary); display: grid; gap: 5px;">
+                    <!-- Dates will be injected here -->
+                </div>
+            </div>
+            <button type="submit" class="primary-btn">Create Account</button>
+        </form>
+    </div>
+</div>
+<!-- Select Category Modal -->
+<div id="select-category-modal" class="modal hidden">
+    <div class="modal-content" style="max-width: 400px;">
+        <span class="close-btn" onclick="closeModal('select-category-modal')"><i class="fa-solid fa-xmark"></i></span>
+        <div class="modal-header">
+            <h3>Select Finance Category</h3>
+        </div>
+        <div id="category-selection-list" style="display: grid; gap: 10px; margin-top: 20px;">
+            <!-- Buttons will be injected here -->
+        </div>
+    </div>
+</div>
+
+<!-- IFSC Finder Modal -->
+<div id="ifsc-finder-modal" class="modal hidden">
+  <div class="modal-content" style="max-width: 500px;">
+    <span class="close-btn" onclick="closeModal('ifsc-finder-modal')"><i class="fa-solid fa-xmark"></i></span>
+    <h3 style="margin-bottom: 20px; color: var(--primary-color);">Find IFSC Code</h3>
+    
+    <div id="ifsc-finder-steps">
+      <!-- Step 1: Select Bank -->
+      <div id="ifsc-step-bank" class="finder-step">
+        <label style="display: block; margin-bottom: 10px; font-weight: 500;">1. Select Bank</label>
+        <input type="text" id="ifsc-bank-search" placeholder="Search Bank (e.g. Indian Bank, TMB...)" oninput="window.filterIFSCBanks()" style="width: 100%; margin-bottom: 15px; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white;" />
+        <div id="ifsc-bank-list" class="selectable-list" style="max-height: 350px; overflow-y: auto; display: grid; gap: 8px;"></div>
+      </div>
+      
+      <!-- Step 2: Search Branch -->
+      <div id="ifsc-step-branch" class="finder-step hidden">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <button type="button" onclick="window.showIFSCStep('bank')" style="background: none; border: none; color: var(--primary-color); cursor: pointer;"><i class="fas fa-arrow-left"></i> Change Bank</button>
+            <label style="font-weight: 500;">2. Search Branch</label>
+          </div>
+          <span id="ifsc-selected-bank" style="font-size: 0.75rem; color: var(--text-secondary); background: rgba(255,255,255,0.05); padding: 4px 8px; border-radius: 4px;"></span>
+        </div>
+        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 10px;">Type branch name or city (e.g., Chennai, Adyar...)</p>
+        <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+          <input type="text" id="ifsc-branch-search" placeholder="Type here..." style="flex: 1; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white;" onkeyup="if(event.key==='Enter') window.searchIFSCBranches()" />
+          <button type="button" class="primary-btn" onclick="window.searchIFSCBranches()" style="width: auto; padding: 0 20px;">Search</button>
+        </div>
+        <div id="ifsc-branch-list" class="selectable-list" style="max-height: 300px; overflow-y: auto; display: grid; gap: 8px;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Custom Popup Modal (Alert/Confirm) -->
+<div id="custom-popup-modal" class="modal hidden" style="z-index: 9999;">
+    <div class="modal-content" style="max-width: 450px; text-align: center; padding: 30px; border-radius: 20px;">
+        <div id="popup-icon" style="font-size: 3rem; margin-bottom: 20px; color: var(--primary-color);">
+            <i class="fa-solid fa-circle-question"></i>
+        </div>
+        <h3 id="popup-title" style="margin-bottom: 15px; font-size: 1.25rem; font-weight: 700;">Confirm Action</h3>
+        <p id="popup-message" style="color: var(--text-secondary); margin-bottom: 30px; line-height: 1.6; font-size: 0.95rem;"></p>
+        <div style="display: flex; gap: 12px; justify-content: center;">
+            <button id="popup-cancel-btn" class="secondary-btn" style="flex: 1; padding: 12px; border-radius: 12px; font-weight: 600;">Cancel</button>
+            <button id="popup-confirm-btn" class="primary-btn" style="flex: 1; width: auto; padding: 12px; border-radius: 12px; font-weight: 600;">OK</button>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Prompt Modal -->
+<div id="custom-prompt-modal" class="modal hidden" style="z-index: 9999;">
+    <div class="modal-content" style="max-width: 400px; padding: 25px; border-radius: 16px;">
+        <h3 id="prompt-title" style="margin-bottom: 20px; font-size: 1.1rem; font-weight: 600;">Enter Value</h3>
+        <input type="number" id="prompt-input" style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white; margin-bottom: 25px; font-size: 1rem;" />
+        <div style="display: flex; gap: 12px; justify-content: flex-end;">
+            <button id="prompt-cancel-btn" class="secondary-btn" style="flex: 1; padding: 10px; border-radius: 8px;">Cancel</button>
+            <button id="prompt-confirm-btn" class="primary-btn" style="flex: 1; width: auto; padding: 10px; border-radius: 8px;">OK</button>
+        </div>
+    </div>
+</div>
+
+<!-- Action Selection Modal for Inactivity -->
+<div id="inactivity-selection-modal" class="modal hidden">
+    <div class="modal-content" style="max-width: 500px;">
+        <span class="close-btn" onclick="closeModal('inactivity-selection-modal')"><i class="fa-solid fa-xmark"></i></span>
+        <div class="modal-header">
+            <h3>Complete Specific Accounts</h3>
+        </div>
+        <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 0.9rem;">
+            Select the accounts you want to move to completed history for <strong id="inactivity-cust-name" style="color: var(--text-primary);"></strong>.
+        </p>
+        <div id="inactivity-account-list" style="display: grid; gap: 12px; margin-bottom: 30px; max-height: 300px; overflow-y: auto; padding-right: 5px;">
+            <!-- Accounts with checkboxes will be injected here -->
+        </div>
+        <div style="display: flex; gap: 12px;">
+            <button class="secondary-btn" style="flex: 1;" onclick="closeModal('inactivity-selection-modal')">Cancel</button>
+            <button id="confirm-inactivity-btn" class="primary-btn" style="flex: 1; width: auto; background: var(--primary-color);">Mark Inactive</button>
+        </div>
+    </div>
+</div>
+
+<!-- Weekly Payment Management Modal -->
+<div id="weekly-payment-modal" class="modal hidden">
+    <div class="modal-content" style="max-width: 800px;">
+        <span class="close-btn" onclick="closeModal('weekly-payment-modal')"><i class="fa-solid fa-xmark"></i></span>
+        <div class="modal-header">
+            <h3 id="weekly-pay-title">Manage Weekly Payments</h3>
+        </div>
+        <div id="weekly-pay-summary" style="margin-bottom: 20px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 12px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; text-align: center;">
+            <div>
+                <div id="weekly-pay-due-label" style="font-size: 0.8rem; color: var(--text-secondary);">Monthly Interest</div>
+                <div id="weekly-pay-due" style="font-weight: 700; font-size: 1.1rem; color: var(--success-color);"></div>
+            </div>
+            <div>
+                <div id="weekly-pay-paid-label" style="font-size: 0.8rem; color: var(--text-secondary);">Paid Interest</div>
+                <div id="weekly-pay-paid" style="font-weight: 700; font-size: 1.1rem; color: var(--success-color);"></div>
+            </div>
+            <div>
+                <div id="weekly-pay-remaining-label" style="font-size: 0.8rem; color: var(--text-secondary);">Remaining Interest</div>
+                <div id="weekly-pay-remaining" style="font-weight: 700; font-size: 1.1rem; color: var(--danger-color);"></div>
+            </div>
+            <div>
+                <div id="weekly-pay-total-label" style="font-size: 0.8rem; color: var(--text-secondary);">Full Amount</div>
+                <div id="weekly-pay-total" style="font-weight: 700; font-size: 1.1rem; color: var(--primary-color);"></div>
+                <div id="weekly-pay-settled-msg" style="font-size: 0.7rem; color: #10b981; margin-top: 4px; display: none; font-weight: 600;">Successfully Paid ✅</div>
+            </div>
+            <div id="weekly-pay-members-card" style="display: none;">
+                <div style="font-size: 0.8rem; color: var(--text-secondary);">Total Customers</div>
+                <div id="weekly-pay-members" style="font-weight: 700; font-size: 1.1rem; color: #38bdf8;"></div>
+            </div>
+        </div>
+        
+        <div class="excel-table-container">
+            <table class="excel-table">
+                <thead>
+                    <tr>
+                        <th class="excel-row-num">#</th>
+                        <th id="excel-header-period">Period</th>
+                        <th>Interest</th>
+                        <th>Due Date</th>
+                        <th>Fine</th>
+                        <th>Status</th>
+                        <th style="text-align: right;">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="weekly-payment-table-body">
+                    <!-- Rows will be injected here -->
+                </tbody>
+            </table>
+        </div>
+
+        <div style="margin-top: 30px; display: flex; justify-content: flex-end;">
+            <button class="secondary-btn" onclick="closeModal('weekly-payment-modal')">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- Account History Report Modal -->
+<div id="account-history-modal" class="modal hidden">
+    <div class="modal-content" style="max-width: 600px;">
+        <span class="close-btn" onclick="closeModal('account-history-modal')"><i class="fa-solid fa-xmark"></i></span>
+        <div class="modal-header">
+            <h3><i class="fa-solid fa-file-invoice" style="margin-right:10px; color:var(--primary-color);"></i>Account History Report</h3>
+        </div>
+        <div id="history-report-content">
+            <div class="report-summary-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px;">
+                <div class="stat-card" style="padding: 15px; background: rgba(255,255,255,0.03);">
+                    <small style="color:var(--text-secondary);">Total Duration</small>
+                    <div id="report-total-duration" style="font-size: 1.25rem; font-weight: 700;">--</div>
+                </div>
+                <div class="stat-card" style="padding: 15px; background: rgba(255,255,255,0.03);">
+                    <small style="color:var(--text-secondary);">Paid Count</small>
+                    <div id="report-paid-count" style="font-size: 1.25rem; font-weight: 700; color: var(--success-color);">--</div>
+                </div>
+                <div class="stat-card" style="padding: 15px; background: rgba(255,255,255,0.03);">
+                    <small style="color:var(--text-secondary);">Skipped Count</small>
+                    <div id="report-skipped-count" style="font-size: 1.25rem; font-weight: 700; color: var(--danger-color);">--</div>
+                </div>
+                <div class="stat-card" style="padding: 15px; background: rgba(255,255,255,0.03);">
+                    <small style="color:var(--text-secondary);">Total Penalty (Skip Intrest)</small>
+                    <div id="report-total-penalty" style="font-size: 1.25rem; font-weight: 700; color: var(--danger-color);">--</div>
+                </div>
+            </div>
+            
+            <h4 style="margin-bottom: 12px; font-size: 0.95rem;">Skip Details & Dates</h4>
+            <div id="report-skip-list" style="max-height: 250px; overflow-y: auto; background: rgba(0,0,0,0.2); border-radius: 12px; padding: 10px;">
+                <!-- Skip dates will be injected here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Collect Payment Modal -->
+<div id="collect-payment-modal" class="modal hidden">
+    <div class="modal-content" style="max-width: 400px;">
+        <span class="close-btn" onclick="closeModal('collect-payment-modal')"><i class="fa-solid fa-xmark"></i></span>
+        <h3>Collect Payment</h3>
+        <p id="payment-account-name" style="color: var(--text-secondary); margin-bottom: 15px; font-size: 0.9rem;"></p>
+        <form id="collect-payment-form" onsubmit="window.handleCollectPayment(event)">
+            <input type="hidden" id="payment-cust-index">
+            <input type="hidden" id="payment-acc-index">
+            <div class="form-group">
+                <label>Amount Received (₹)</label>
+                <input type="number" name="amount" id="payment-amount-input" required>
+            </div>
+            <div class="form-group">
+                <label>Payment Date</label>
+                <input type="date" name="date" id="payment-date-input" required>
+            </div>
+            <button type="submit" class="primary-btn">Record Payment</button>
+        </form>
+    </div>
+</div>
+<!-- SYSTEM SETTINGS MODAL -->
+<div id="settings-modal" class="modal hidden">
+    <div class="modal-content" style="max-width: 500px;">
+        <span class="close-btn" onclick="closeModal('settings-modal')"><i class="fa-solid fa-xmark"></i></span>
+        <div class="modal-header">
+            <h3><i class="fa-solid fa-gear" style="margin-right:10px; color:var(--primary-color);"></i>System Settings</h3>
+        </div>
+        <form id="settings-form" onsubmit="window.handleSaveSettings(event)">
+            <div class="form-section" style="margin-top: 20px;">
+                <h4 style="margin-bottom: 15px; font-size: 0.9rem; color: var(--primary-color);">Razorpay Configuration</h4>
+                <div class="form-group">
+                    <label>Razorpay Key ID</label>
+                    <input type="text" id="setting-rzp-key" placeholder="rzp_test_..." required>
+                    <small style="color: var(--text-secondary); display: block; margin-top: 5px;">Get this from your Razorpay Dashboard > Settings > API Keys</small>
+                </div>
+            </div>
+            
+            <div class="form-section" style="margin-top: 25px; border-top: 1px solid var(--border-color); padding-top: 20px;">
+                <h4 style="margin-bottom: 15px; font-size: 0.9rem; color: var(--primary-color);">Payment Gateway</h4>
+                <div class="form-group">
+                    <label>UPI ID for QR Code</label>
+                    <input type="text" id="setting-upi-id" placeholder="srinadhifoods-1@okicici">
+                </div>
+            </div>
+
+            <div style="margin-top: 30px; display: flex; gap: 12px;">
+                <button type="button" class="secondary-btn" style="flex: 1;" onclick="closeModal('settings-modal')">Cancel</button>
+                <button type="submit" class="primary-btn" style="flex: 1; width: auto;">Save Settings</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ADD CHIT GROUP MODAL -->
+<div id="add-chit-group-modal" class="modal hidden">
+    <div class="modal-content" style="max-width: 500px;">
+        <span class="close-btn" onclick="closeModal('add-chit-group-modal')"><i class="fa-solid fa-xmark"></i></span>
+        <div class="modal-header">
+            <h3><i class="fa-solid fa-layer-group" style="margin-right:10px; color:var(--primary-color);"></i>Create New Chit Group</h3>
+        </div>
+        <form id="add-chit-group-form" onsubmit="window.handleAddChitGroup(event)">
+            <input type="hidden" name="type" id="group-setup-type">
+            <div class="form-group">
+                <label>Group Name</label>
+                <input type="text" name="name" placeholder="e.g. Group A - 50K" required>
+            </div>
+            <div class="form-group">
+                <label>Chit Value (Pot) (₹)</label>
+                <input type="number" name="value" id="group-setup-value" value="50000" required oninput="window.calcGroupDue && window.calcGroupDue()">
+            </div>
+            <div class="form-group">
+                <label id="group-members-label">Total Members / Months</label>
+                <input type="number" name="members" id="group-setup-members" value="20" required oninput="window.calcGroupDue && window.calcGroupDue()">
+            </div>
+            <div class="form-group">
+                <label id="group-due-label">Monthly Due (₹)</label>
+                <input type="number" name="due" id="group-setup-due" value="2500" required>
+            </div>
+            <div class="form-group">
+                <label>Description (Optional)</label>
+                <textarea name="description" placeholder="Short notes about this group..."></textarea>
+            </div>
+            <button type="submit" class="primary-btn" style="margin-top: 15px;">Create Group</button>
+        </form>
+    </div>
+</div>
+
+<!-- SELECT CUSTOMER MODAL (For adding member to group) -->
+<div id="select-customer-modal" class="modal hidden">
+    <div class="modal-content" style="max-width: 600px;">
+        <span class="close-btn" onclick="closeModal('select-customer-modal')"><i class="fa-solid fa-xmark"></i></span>
+        <h3>Select Member to Add</h3>
+        <div class="form-group">
+            <input type="text" id="member-search-input" placeholder="Search customer by name or phone..." oninput="window.filterMemberSelection()">
+        </div>
+        <div id="member-selection-list" style="max-height: 300px; overflow-y: auto; background: rgba(0,0,0,0.2); border-radius: 12px; margin-top: 10px;">
+            <!-- Members will be injected here -->
+        </div>
+        <div style="margin-top: 20px; text-align: center; border-top: 1px solid var(--border-color); padding-top: 15px;">
+            <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 10px;">Don't see the customer in the list?</p>
+            <button class="secondary-btn small" onclick="window.switchToNewCustomerInGroup()">
+                <i class="fa-solid fa-plus-circle"></i> Create New Customer
+            </button>
+        </div>
+    </div>
+</div>

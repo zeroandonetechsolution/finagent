@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inactive Users - FinAgent Pro</title>
+    <link rel="stylesheet" href="style.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <style>
+      /* ---- Page-specific overrides ---- */
+      .ac-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+        margin-bottom: 22px;
+      }
+      .ac-search-wrap {
+        position: relative;
+        flex: 1 1 220px;
+      }
+      .ac-search-wrap i {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+      }
+      #ac-search {
+        width: 100%;
+        padding: 10px 14px 10px 38px;
+        border-radius: 10px;
+        border: 1px solid var(--border-color);
+        background: var(--card-bg);
+        color: var(--text-primary);
+        font-size: 0.9rem;
+        outline: none;
+        transition: border-color .2s;
+      }
+      #ac-search:focus { border-color: var(--primary-color); }
+
+      .ac-filter-wrap {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .filter-chip {
+        padding: 7px 15px;
+        border-radius: 20px;
+        border: 1px solid var(--border-color);
+        background: var(--card-bg);
+        color: var(--text-secondary);
+        font-size: 0.8rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all .2s;
+        white-space: nowrap;
+      }
+      .filter-chip:hover { border-color: var(--primary-color); color: var(--primary-color); }
+      .filter-chip.active {
+        background: var(--primary-color);
+        border-color: var(--primary-color);
+        color: #fff;
+      }
+
+      /* Summary bar */
+      .ac-summary {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+      .ac-badge {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        border-radius: 10px;
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        font-size: 0.82rem;
+        color: var(--text-secondary);
+      }
+      .ac-badge strong { color: var(--text-primary); font-size: 1rem; }
+      .ac-badge i { font-size: 0.9rem; }
+
+      /* Table tag pills */
+      .cat-tag {
+        display: inline-block;
+        padding: 3px 9px;
+        border-radius: 12px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        margin: 2px 2px 0 0;
+        white-space: nowrap;
+      }
+      .tag-monthly   { background: rgba(99,102,241,.15); color: #818cf8; }
+      .tag-weekly    { background: rgba(34,197,94,.12);  color: #4ade80; }
+      .tag-pongal    { background: rgba(251,146,60,.15); color: #fb923c; }
+      .tag-diwali    { background: rgba(244,63,94,.12);  color: #fb7185; }
+      .tag-rice      { background: rgba(234,179,8,.12);  color: #facc15; }
+      .tag-mchit     { background: rgba(168,85,247,.15); color: #c084fc; }
+      .tag-chitfund  { background: rgba(56,189,248,.12); color: #38bdf8; }
+      .tag-none      { background: rgba(148,163,184,.1); color: #94a3b8; }
+
+      /* No-results */
+      .ac-empty {
+        text-align: center;
+        padding: 48px 20px;
+        color: var(--text-secondary);
+      }
+      .ac-empty i { font-size: 2.5rem; opacity: .35; display: block; margin-bottom: 12px; }
+
+      /* Row hover */
+      tbody tr { transition: background .15s; }
+      tbody tr:hover { background: rgba(255,255,255,.03); }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <section id="admin-dashboard-view" class="view active">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+          <div class="brand"><i class="fa-solid fa-coins"></i> FinAgent</div>
+                                                  <nav>
+            <a href="admin.html" class="nav-btn "><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+            <a href="allcustomers.html" class="nav-btn "><i class="fa-solid fa-users"></i> All Customers</a>
+            
+            <div class="nav-label" style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin: 15px 0 5px 10px; opacity: 0.7; font-weight: 600;">Finance</div>
+            <a href="weeklycust.html" class="nav-btn "><i class="fa-solid fa-calendar-week"></i> Weekly Finance</a>
+            <a href="monthlycust.html" class="nav-btn "><i class="fa-solid fa-calendar-days"></i> Monthly Finance</a>
+            <a href="monthlyinterest.html" class="nav-btn "><i class="fa-solid fa-hand-holding-dollar"></i> Monthly Interest</a>
+            
+            <div class="nav-label" style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin: 15px 0 5px 10px; opacity: 0.7; font-weight: 600;">Savings</div>
+            <a href="diwalichit.html" class="nav-btn "><i class="fa-solid fa-burst"></i> Diwali Chit</a>
+            <a href="pongalchit.html" class="nav-btn "><i class="fa-solid fa-bowl-rice"></i> Pongal Chit</a>
+            <a href="monthlychit.html" class="nav-btn "><i class="fa-solid fa-calendar-check"></i> Monthly Chit</a>
+            
+            <div class="nav-label" style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin: 15px 0 5px 10px; opacity: 0.7; font-weight: 600;">Normal Due</div>
+            <a href="riceaccount.html" class="nav-btn "><i class="fa-solid fa-bucket"></i> Rice Account</a>
+            
+            <div style="margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 15px;"></div>
+            <a href="transactions.html" class="nav-btn "><i class="fa-solid fa-receipt"></i> Transactions</a>
+            <a href="passbook.html" class="nav-btn "><i class="fa-solid fa-book-open"></i> Customer Passbook</a>
+            
+            <div class="nav-label" style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin: 15px 0 5px 10px; opacity: 0.7; font-weight: 600;">History</div>
+            <a href="activeusers.html" class="nav-btn "><i class="fa-solid fa-user-check"></i> Active Users</a>
+            <a href="inactiveusers.html" class="nav-btn active"><i class="fa-solid fa-user-minus"></i> Inactive Users</a>
+
+            <button class="nav-btn logout" style="margin-top: 15px;" onclick="logout()"><i class="fa-solid fa-sign-out-alt"></i> Logout</button>
+          </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+          <header>
+            <h2><i class="fa-solid fa-user-minus" style="color:var(--primary-color);margin-right:10px;"></i>Inactive Users</h2>
+            <div class="user-profile">
+              <button class="primary-btn small" onclick="openModal('add-customer-modal')">
+                <i class="fa-solid fa-plus"></i> Add Customer
+              </button>
+            </div>
+          </header>
+
+          <div class="admin-section active">
+
+            <!-- Summary badges -->
+            <div class="ac-summary" id="ac-summary"></div>
+
+            <!-- Toolbar: search + filters -->
+            <div class="ac-toolbar">
+              <div class="ac-search-wrap">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input id="ac-search" type="text" placeholder="Search by name or phone…" oninput="renderAll()" />
+              </div>
+              <div class="ac-filter-wrap" id="ac-filters"></div>
+            </div>
+
+            <!-- Table -->
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Categories</th>
+                    <th>Accounts</th>
+                    <th>Actions</th>
+                    <th>User Activity</th>
+                  </tr>
+                </thead>
+                <tbody id="all-customer-tbody"></tbody>
+              </table>
+            </div>
+            <p id="ac-count" style="text-align:right;color:var(--text-secondary);font-size:0.82rem;margin-top:10px;"></p>
+          </div>
+        </main>
+      </section>
+    </div>
+
+    <script src="core.js"></script>
+    <script src="script.js"></script>
+    <script>
+      checkAuth('admin');
+
+      // ---- Category definitions ----
+                  const CATEGORIES = [
+        { key: 'Weekly Finance',  label: 'Weekly Finance',  cls: 'tag-weekly',   icon: 'fa-calendar-week' },
+        { key: 'Monthly Finance', label: 'Monthly Finance', cls: 'tag-monthly',  icon: 'fa-calendar-days' },
+        { key: 'Monthly Interest',label: 'Monthly Interest', cls: 'tag-m-int',   icon: 'fa-percent' },
+        { key: 'Diwali Chit',     label: 'Diwali Finance',  cls: 'tag-diwali',   icon: 'fa-burst' },
+        { key: 'Pongal Chit',     label: 'Pongal Finance',  cls: 'tag-pongal',   icon: 'fa-bowl-rice' },
+        { key: 'Monthly Chit',    label: 'Monthly Finance', cls: 'tag-mchit',    icon: 'fa-calendar-check' },
+        { key: 'Rice Account',    label: 'Rice Account',   cls: 'tag-rice',     icon: 'fa-bucket' },
+      ];
+
+      let activeFilter = 'All';
+
+      function getCats(cust) {
+        const types = new Set((cust.financeAccounts || []).map(a => a.type).filter(Boolean));
+        return [...types];
+      }
+
+      function tagHtml(type) {
+        const cat = CATEGORIES.find(c => c.key === type);
+        if (!cat) return `<span class="cat-tag tag-none">${type}</span>`;
+        return `<span class="cat-tag ${cat.cls}"><i class="fa-solid ${cat.icon}" style="font-size:0.65rem;margin-right:3px;"></i>${cat.label}</span>`;
+      }
+
+      // Build filter chips
+      function buildFilters() {
+        const wrap = document.getElementById('ac-filters');
+        const all  = ['All', ...CATEGORIES.map(c => c.key)];
+        wrap.innerHTML = all.map(k =>
+          `<button class="filter-chip ${activeFilter === k ? 'active' : ''}" onclick="setFilter('${k}')">${k === 'All' ? '<i class="fa-solid fa-layer-group" style="margin-right:5px;font-size:.75rem;"></i>All' : k}</button>`
+        ).join('');
+      }
+
+      function setFilter(key) {
+        activeFilter = key;
+        buildFilters();
+        renderAll();
+      }
+
+      // Build summary badges
+            function buildSummary() {
+        const totalCusts = customers.length;
+        const totalAccs  = customers.reduce((sum, c) => sum + (c.financeAccounts || []).length, 0);
+        const countFor   = (key) => customers.filter(c => getCats(c).includes(key)).length;
+        const noAcc      = customers.filter(c => !c.financeAccounts || c.financeAccounts.length === 0).length;
+
+        let html = `<div class="ac-badge"><i class="fa-solid fa-users" style="color:var(--primary-color)"></i><strong>${totalCusts}</strong> Total Customers</div>`;
+        html += `<div class="ac-badge"><i class="fa-solid fa-folder-tree" style="color:#10b981"></i><strong>${totalAccs}</strong> Active Accounts</div>`;
+        
+        CATEGORIES.forEach(cat => {
+          const n = countFor(cat.key);
+          if (n > 0) html += `<div class="ac-badge"><i class="fa-solid ${cat.icon}"></i><strong>${n}</strong> ${cat.label}</div>`;
+        });
+        if (noAcc > 0) html += `<div class="ac-badge"><i class="fa-solid fa-user-slash"></i><strong>${noAcc}</strong> No Account</div>`;
+        document.getElementById('ac-summary').innerHTML = html;
+      }
+
+      function renderAll() {
+        const q = (document.getElementById('ac-search').value || '').toLowerCase().trim();
+        const tbody = document.getElementById('all-customer-tbody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+
+        let pool = customers.filter((c, i) => {
+          // Search filter
+          const matchQ = !q || c.name.toLowerCase().includes(q) || (c.phone || '').includes(q) || (c.address || '').toLowerCase().includes(q);
+          // Category filter
+          const cats = getCats(c);
+          const matchF = activeFilter === 'All' || cats.includes(activeFilter);
+          const matchInactive = (!c.financeAccounts || c.financeAccounts.length === 0);
+          return matchQ && matchF && matchInactive;
+        });
+
+        if (pool.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="7"><div class="ac-empty"><i class="fa-solid fa-user-slash"></i>No inactive users found.</div></td></tr>`;
+          if (document.getElementById('ac-count')) document.getElementById('ac-count').innerText = '';
+          return;
+        }
+
+        pool.forEach((cust, i) => {
+          const idx = customers.findIndex(c => c.phone === cust.phone);
+          const cats = getCats(cust);
+          const accCount = (cust.financeAccounts || []).length;
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td style="color:var(--text-secondary);font-size:.85rem;">${i + 1}</td>
+            <td>
+              <div style="display:flex;align-items:center;gap:10px;">
+                <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--primary-color),#8b5cf6);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.95rem;color:#fff;flex-shrink:0;">
+                  ${(cust.name || '?')[0].toUpperCase()}
+                </div>
+                <div>
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <div style="font-weight:600;">${cust.name}</div>
+                    <button class="secondary-btn small" title="Add to Category" onclick="openSelectCategoryModal(${idx})" style="padding:2px 5px;font-size:0.75rem;border-radius:4px;color:var(--primary-color);border-color:var(--primary-color);opacity:0.8;">
+                      <i class="fa-solid fa-circle-plus"></i>
+                    </button>
+                  </div>
+                  <div style="font-size:.77rem;color:var(--text-secondary);">${cust.address || '—'}</div>
+                </div>
+              </div>
+            </td>
+            <td style="font-size:.88rem;">${cust.phone || '—'}</td>
+            <td style="max-width:260px;">
+              ${cats.length ? cats.map(tagHtml).join('') : '<span class="cat-tag tag-none">No Account</span>'}
+            </td>
+            <td style="text-align:center;font-weight:600;color:var(--primary-color);">${accCount}</td>
+            <td>
+              <button class="secondary-btn" title="Send Money" onclick="window.location.href='admin-payout.html?cust=${cust.phone}'" style="color:var(--primary-color)"><i class="fa-solid fa-paper-plane"></i></button>
+              <button class="secondary-btn" title="View Details" onclick="viewCustomerDetails(${idx})"><i class="fa-solid fa-circle-info"></i></button>
+              <button class="secondary-btn" title="Edit" onclick="openEditModal(${idx})"><i class="fa-solid fa-pen"></i></button>
+              ${cats.map(type => {
+                const cfg = FINANCE_BTN_MAP[type];
+                if (!cfg) return '';
+                const accIdx = (cust.financeAccounts || []).findIndex(a => a.type === type);
+                return `<button class="secondary-btn" title="${cfg.title}" onclick="handleFinanceClick(${idx}, ${accIdx}, '${type}')"><i class="fa-solid ${cfg.icon}"></i></button>`;
+              }).join('')}
+              <button class="secondary-btn" title="Delete" onclick="deleteCustomer(${idx})" style="color:var(--danger-color)"><i class="fa-solid fa-trash"></i></button>
+            </td>
+            <td>
+              <div style="display:flex; gap:8px;">
+                <button class="secondary-btn small" onclick="window.markUserActivity(${idx}, 'active')" style="font-size:0.75rem; padding: 4px 8px; border-color:var(--success-color); color:var(--success-color)"><i class="fa-solid fa-check-circle" style="margin-right:2px;"></i> Active</button>
+              </div>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+        if (document.getElementById('ac-count')) document.getElementById('ac-count').innerText = `Showing ${pool.length} of ${customers.length} customer${customers.length !== 1 ? 's' : ''}`;
+      }
+
+      // Init
+      buildSummary();
+      buildFilters();
+      renderAll();
+    </script>
+  </body>
+</html>

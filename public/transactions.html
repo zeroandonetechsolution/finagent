@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Transactions - FinAgent Pro</title>
+    <link rel="stylesheet" href="style.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  </head>
+  <body>
+    <div id="app">
+      <section id="admin-dashboard-view" class="view active">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+          <div class="brand"><i class="fa-solid fa-coins"></i> FinAgent</div>
+                                                  <nav>
+            <a href="admin.html" class="nav-btn "><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+            <a href="allcustomers.html" class="nav-btn "><i class="fa-solid fa-users"></i> All Customers</a>
+            
+            <div class="nav-label" style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin: 15px 0 5px 10px; opacity: 0.7; font-weight: 600;">Finance</div>
+            <a href="weeklycust.html" class="nav-btn "><i class="fa-solid fa-calendar-week"></i> Weekly Finance</a>
+            <a href="monthlycust.html" class="nav-btn "><i class="fa-solid fa-calendar-days"></i> Monthly Finance</a>
+            <a href="monthlyinterest.html" class="nav-btn "><i class="fa-solid fa-hand-holding-dollar"></i> Monthly Interest</a>
+            
+            <div class="nav-label" style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin: 15px 0 5px 10px; opacity: 0.7; font-weight: 600;">Savings</div>
+            <a href="diwalichit.html" class="nav-btn "><i class="fa-solid fa-burst"></i> Diwali Chit</a>
+            <a href="pongalchit.html" class="nav-btn "><i class="fa-solid fa-bowl-rice"></i> Pongal Chit</a>
+            <a href="monthlychit.html" class="nav-btn "><i class="fa-solid fa-calendar-check"></i> Monthly Chit</a>
+            
+            <div class="nav-label" style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin: 15px 0 5px 10px; opacity: 0.7; font-weight: 600;">Normal Due</div>
+            <a href="riceaccount.html" class="nav-btn "><i class="fa-solid fa-bucket"></i> Rice Account</a>
+            
+            <div style="margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 15px;"></div>
+            <a href="transactions.html" class="nav-btn active"><i class="fa-solid fa-receipt"></i> Transactions</a>
+            <a href="passbook.html" class="nav-btn "><i class="fa-solid fa-book-open"></i> Customer Passbook</a>
+            
+            <div class="nav-label" style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin: 15px 0 5px 10px; opacity: 0.7; font-weight: 600;">History</div>
+            <a href="activeusers.html" class="nav-btn "><i class="fa-solid fa-user-check"></i> Active Users</a>
+            <a href="inactiveusers.html" class="nav-btn "><i class="fa-solid fa-user-minus"></i> Inactive Users</a>
+
+            <button class="nav-btn logout" style="margin-top: 15px;" onclick="logout()"><i class="fa-solid fa-sign-out-alt"></i> Logout</button>
+          </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+          <header>
+            <h2>Transaction History</h2>
+            <div class="user-profile">
+               <span id="admin-name">Agent Portal</span>
+            </div>
+          </header>
+
+          <div class="admin-section active">
+            <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
+              <div class="stat-card">
+                <h3>Total Collections</h3>
+                <p class="stat-value" id="trans-total-revenue" style="color: var(--success-color);">₹0</p>
+              </div>
+              <div class="stat-card">
+                <h3>Total Spends</h3>
+                <p class="stat-value" id="trans-total-spends" style="color: var(--danger-color)">₹0</p>
+              </div>
+              <div class="stat-card highlight">
+                <h3>Total Transactions</h3>
+                <p class="stat-value" id="trans-total-samples">0</p>
+              </div>
+            </div>
+
+            <div class="table-container" style="margin-top: 30px;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Customer</th>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                  </tr>
+                </thead>
+                <tbody id="transactions-table-body">
+                  <!-- JS populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </main>
+      </section>
+    </div>
+
+    <script src="core.js"></script>
+    <script src="script.js"></script>
+    <script>
+      checkAuth('admin');
+      
+      // Local page logic
+      function renderTransactions() {
+          const tbody = document.getElementById('transactions-table-body');
+          let collections = 0;
+          let spends = 0;
+          let count = 0;
+          tbody.innerHTML = '';
+          
+          customers.forEach(cust => {
+              (cust.transactions || []).forEach(t => {
+                  const isPayout = t.type === 'Payout' || t.type === 'Disbursement';
+                  if (isPayout) spends += parseFloat(t.amount || 0);
+                  else collections += parseFloat(t.amount || 0);
+                  count++;
+                  
+                  const badgeColor = isPayout ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)';
+                  const badgeText = isPayout ? 'Payout' : (t.type || 'Payment');
+                  const amountColor = isPayout ? 'var(--danger-color)' : 'var(--success-color)';
+                  const amountPrefix = isPayout ? '-' : '+';
+                  
+                  const tr = document.createElement('tr');
+                  tr.innerHTML = `
+                      <td><b>${cust.name}</b><br><small style="opacity:0.6;">${t.description || ''}</small></td>
+                      <td>${t.date || 'Today'}</td>
+                      <td><span class="badge" style="background: ${badgeColor}; color: ${isPayout ? '#ef4444' : '#10b981'}; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem;">${badgeText}</span></td>
+                      <td style="color: ${amountColor}; font-weight: 700;">${amountPrefix} ₹${parseFloat(t.amount || 0).toLocaleString()}</td>
+                  `;
+                  tbody.appendChild(tr);
+              });
+          });
+          
+          const formatMoney = (val) => {
+              if(val >= 100000) return `₹${(val/100000).toFixed(2)}L`;
+              if(val >= 1000) return `₹${(val/1000).toFixed(1)}K`;
+              return `₹${val.toLocaleString()}`;
+          };
+          
+          document.getElementById('trans-total-revenue').innerText = formatMoney(collections);
+          document.getElementById('trans-total-spends').innerText = formatMoney(spends);
+          document.getElementById('trans-total-samples').innerText = count;
+      }
+      
+      renderTransactions();
+    </script>
+  </body>
+</html>
+
+

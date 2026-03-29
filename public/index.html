@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FinAgent Pro - Login</title>
+    <link rel="stylesheet" href="style.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  </head>
+  <body>
+    <div id="app">
+      <section id="login-view" class="view active">
+        <div class="login-container">
+          <div class="brand-header animate-in">
+            <i class="fa-solid fa-coins brand-icon"></i>
+            <h1>FinAgent <span class="highlight">Pro</span></h1>
+            <p>Secure Chit Fund & Finance Management</p>
+          </div>
+
+          <div class="login-tabs animate-in delay-1">
+            <button class="tab-btn active" onclick="switchLoginTab('admin', event)">
+              Agent Admin
+            </button>
+            <button class="tab-btn" onclick="switchLoginTab('customer', event)">
+              Customer
+            </button>
+          </div>
+
+          <div id="admin-login-form" class="login-form active">
+            <h2>Agent Login</h2>
+            <input type="text" id="admin-username" placeholder="Username" />
+            <input type="password" id="admin-password" placeholder="Password" />
+            <button class="primary-btn" onclick="loginAgent()">
+              Login as Agent
+            </button>
+          </div>
+
+          <div id="customer-login-form" class="login-form">
+            <h2>Customer Login</h2>
+            <input type="tel" id="customer-phone" placeholder="Registered Phone Number" />
+            <input type="password" id="customer-password" placeholder="Password" />
+            <button class="primary-btn" onclick="loginCustomer()">
+              Login to Passbook
+            </button>
+          </div>
+
+        </div>
+      </section>
+    </div>
+
+    <script src="core.js"></script>
+    <script>
+      function switchLoginTab(type, event) {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+        document.querySelectorAll('.login-form').forEach(form => form.classList.remove('active'));
+        document.getElementById(type + '-login-form').classList.add('active');
+      }
+
+      async function loginAgent() {
+        const u = document.getElementById('admin-username').value;
+        const p = document.getElementById('admin-password').value;
+        if (u === 'nagaraj' && p === '123456') {
+          localStorage.setItem('finagent_user', JSON.stringify({ role: 'admin', name: 'Nagaraj' }));
+          window.location.href = 'admin.html';
+        } else {
+          await window.showPopup({ type: 'alert', title: 'Login Failed', message: 'Invalid Credentials' });
+        }
+      }
+
+      async function loginCustomer() {
+        const phone = document.getElementById('customer-phone').value;
+        const pass = document.getElementById('customer-password').value;
+        const customer = customers.find(c => c.phone === phone && c.password === pass);
+        if (customer) {
+          localStorage.setItem('finagent_user', JSON.stringify({ role: 'customer', phone: customer.phone, name: customer.name, uid: customer.uid }));
+          window.location.href = 'customer.html';
+        } else {
+          await window.showPopup({ type: 'alert', title: 'Login Failed', message: 'Invalid Credentials' });
+        }
+      }
+    </script>
+  </body>
+</html>

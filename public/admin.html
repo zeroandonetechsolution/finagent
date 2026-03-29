@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FinAgent Pro - Admin Dashboard</title>
+    <link rel="stylesheet" href="style.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  </head>
+  <body>
+    <div id="app">
+      <section id="admin-dashboard-view" class="view active">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+          <div class="brand"><i class="fa-solid fa-coins"></i> FinAgent</div>
+          <nav>
+            <a href="admin.html" class="nav-btn active"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+            <a href="allcustomers.html" class="nav-btn "><i class="fa-solid fa-users"></i> All Customers</a>
+            
+            <div class="nav-label" style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin: 15px 0 5px 10px; opacity: 0.7; font-weight: 600;">Finance</div>
+            <a href="weeklycust.html" class="nav-btn "><i class="fa-solid fa-calendar-week"></i> Weekly Finance</a>
+            <a href="monthlycust.html" class="nav-btn "><i class="fa-solid fa-calendar-days"></i> Monthly Finance</a>
+            <a href="monthlyinterest.html" class="nav-btn "><i class="fa-solid fa-hand-holding-dollar"></i> Monthly Interest</a>
+            
+            <div class="nav-label" style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin: 15px 0 5px 10px; opacity: 0.7; font-weight: 600;">Savings</div>
+            <a href="diwalichit.html" class="nav-btn "><i class="fa-solid fa-burst"></i> Diwali Chit</a>
+            <a href="pongalchit.html" class="nav-btn "><i class="fa-solid fa-bowl-rice"></i> Pongal Chit</a>
+            <a href="monthlychit.html" class="nav-btn "><i class="fa-solid fa-calendar-check"></i> Monthly Chit</a>
+            
+            <div class="nav-label" style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin: 15px 0 5px 10px; opacity: 0.7; font-weight: 600;">Normal Due</div>
+            <a href="riceaccount.html" class="nav-btn "><i class="fa-solid fa-bucket"></i> Rice Account</a>
+            
+            <div style="margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 15px;"></div>
+            <a href="transactions.html" class="nav-btn "><i class="fa-solid fa-receipt"></i> Transactions</a>
+            <a href="passbook.html" class="nav-btn "><i class="fa-solid fa-book-open"></i> Customer Passbook</a>
+            
+            <div class="nav-label" style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin: 15px 0 5px 10px; opacity: 0.7; font-weight: 600;">History</div>
+            <a href="activeusers.html" class="nav-btn "><i class="fa-solid fa-user-check"></i> Active Users</a>
+            <a href="inactiveusers.html" class="nav-btn "><i class="fa-solid fa-user-minus"></i> Inactive Users</a>
+
+            <button class="nav-btn logout" style="margin-top: 15px;" onclick="logout()"><i class="fa-solid fa-sign-out-alt"></i> Logout</button>
+          </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+          <header>
+            <h2>Dashboard</h2>
+            <div class="user-profile">
+              <span id="admin-name">Welcome, Admin</span>
+              <div class="avatar">N</div>
+            </div>
+          </header>
+
+            <!-- REVENUE STATS -->
+            <div class="stats-grid" style="margin-top: 30px;">
+              <div class="stat-card highlight clickable" onclick="window.location.href='allcustomers.html'">
+                <h3>Total Customers</h3>
+                <p class="stat-value" id="stat-total-samples">0</p>
+                <div class="card-footer-link">View All Customers <i class="fa-solid fa-arrow-right"></i></div>
+              </div>
+              <div class="stat-card">
+                <h3>Total Spends</h3>
+                <p class="stat-value" id="stat-total-spends" style="color: var(--danger-color)">₹0</p>
+              </div>
+              <div class="stat-card">
+                <h3>Total Received (Payings)</h3>
+                <p class="stat-value" id="stat-collected-dues" style="color: #10b981">₹0</p>
+                <div class="card-footer-link" onclick="window.location.href='transactions.html'">View All Transactions <i class="fa-solid fa-arrow-right"></i></div>
+              </div>
+              <div class="stat-card highlight">
+                <h3>Remaining Balance</h3>
+                <p class="stat-value" id="stat-current-balance" style="color: var(--primary-color)">₹0</p>
+                <div style="font-size: 0.7rem; opacity: 0.6; margin-top: 5px;">(Total Spends - Payings)</div>
+              </div>
+            </div>
+            <p class="stats-label"><i class="fa-solid fa-circle-info"></i> Your <strong>Overall</strong> business metrics.</p>
+
+            <!-- FINANCE CATEGORY STATS -->
+            <h3 style="margin-top: 40px; margin-bottom: 10px; font-size: 1.2rem; color: var(--text-secondary); border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">Finance Category</h3>
+            <h4 style="margin-top: 20px; color: var(--text-primary); opacity: 0.9;">Weekly Finance</h4>
+            <div class="stats-grid" style="margin-top: 15px;">
+              <div class="stat-card clickable" onclick="window.location.href='weeklycust.html'">
+                <h3 style="font-size:0.8rem;">Weekly Customers</h3>
+                <p class="stat-value" id="stat-weekly-customers">0</p>
+                <div class="card-footer-link">Weekly List <i class="fa-solid fa-arrow-right"></i></div>
+              </div>
+              <div class="stat-card">
+                <h3 style="font-size:0.8rem;">Weekly Loan Value</h3>
+                <p class="stat-value" id="stat-weekly-value">₹0</p>
+              </div>
+              <div class="stat-card highlight">
+                <h3 style="font-size:0.8rem;">Weekly Pending Dues</h3>
+                <p class="stat-value" id="stat-weekly-dues">₹0</p>
+              </div>
+            </div>
+
+            <h4 style="margin-top: 30px; color: var(--text-primary); opacity: 0.9;">Monthly Finance</h4>
+            <div class="stats-grid" style="margin-top: 15px;">
+              <div class="stat-card clickable" onclick="window.location.href='monthlycust.html'">
+                <h3 style="font-size:0.8rem;">Monthly Customers</h3>
+                <p class="stat-value" id="stat-monthly-customers">0</p>
+                <div class="card-footer-link">Monthly List <i class="fa-solid fa-arrow-right"></i></div>
+              </div>
+              <div class="stat-card">
+                <h3 style="font-size:0.8rem;">Monthly Loan Value</h3>
+                <p class="stat-value" id="stat-monthly-value">₹0</p>
+              </div>
+              <div class="stat-card highlight">
+                <h3 style="font-size:0.8rem;">Monthly Pending Dues</h3>
+                <p class="stat-value" id="stat-monthly-dues">₹0</p>
+              </div>
+            </div>
+
+            <h4 style="margin-top: 30px; color: var(--text-primary); opacity: 0.9;">Monthly Interest</h4>
+            <div class="stats-grid" style="margin-top: 15px;">
+              <div class="stat-card clickable" onclick="window.location.href='monthlyinterest.html'">
+                <h3 style="font-size:0.8rem;">Monthly Interest Customers</h3>
+                <p class="stat-value" id="stat-monthlyinterest-customers">0</p>
+                <div class="card-footer-link">Monthly Interest List <i class="fa-solid fa-arrow-right"></i></div>
+              </div>
+              <div class="stat-card">
+                <h3 style="font-size:0.8rem;">Interest Principal Value</h3>
+                <p class="stat-value" id="stat-monthlyinterest-value">₹0</p>
+              </div>
+              <div class="stat-card highlight">
+                <h3 style="font-size:0.8rem;">Monthly Pending Interest</h3>
+                <p class="stat-value" id="stat-monthlyinterest-dues">₹0</p>
+              </div>
+            </div>
+
+            <!-- SAVINGS CATEGORY STATS -->
+            <h3 style="margin-top: 50px; margin-bottom: 10px; font-size: 1.2rem; color: var(--text-secondary); border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">Savings Category</h3>
+            
+            <h4 style="margin-top: 20px; color: var(--text-primary); opacity: 0.9;">Diwali Chit</h4>
+            <div class="stats-grid" style="margin-top: 15px;">
+              <div class="stat-card clickable" onclick="window.location.href='diwalichit.html'">
+                <h3 style="font-size:0.8rem;">Diwali Customers</h3>
+                <p class="stat-value" id="stat-diwali-customers">0</p>
+                <div class="card-footer-link">Diwali List <i class="fa-solid fa-arrow-right"></i></div>
+              </div>
+              <div class="stat-card">
+                <h3 style="font-size:0.8rem;">Diwali Total Value</h3>
+                <p class="stat-value" id="stat-diwali-value">₹0</p>
+              </div>
+              <div class="stat-card highlight">
+                <h3 style="font-size:0.8rem;">Diwali Pending Dues</h3>
+                <p class="stat-value" id="stat-diwali-dues">₹0</p>
+              </div>
+            </div>
+
+            <h4 style="margin-top: 30px; color: var(--text-primary); opacity: 0.9;">Pongal Chit</h4>
+            <div class="stats-grid" style="margin-top: 15px;">
+              <div class="stat-card clickable" onclick="window.location.href='pongalchit.html'">
+                <h3 style="font-size:0.8rem;">Pongal Customers</h3>
+                <p class="stat-value" id="stat-pongal-customers">0</p>
+                <div class="card-footer-link">Pongal List <i class="fa-solid fa-arrow-right"></i></div>
+              </div>
+              <div class="stat-card">
+                <h3 style="font-size:0.8rem;">Pongal Total Value</h3>
+                <p class="stat-value" id="stat-pongal-value">₹0</p>
+              </div>
+              <div class="stat-card highlight">
+                <h3 style="font-size:0.8rem;">Pongal Pending Dues</h3>
+                <p class="stat-value" id="stat-pongal-dues">₹0</p>
+              </div>
+            </div>
+
+            <h4 style="margin-top: 30px; color: var(--text-primary); opacity: 0.9;">Monthly Chit</h4>
+            <div class="stats-grid" style="margin-top: 15px;">
+              <div class="stat-card clickable" onclick="window.location.href='monthlychit.html'">
+                <h3 style="font-size:0.8rem;">Monthly Chit Customers</h3>
+                <p class="stat-value" id="stat-monthlychit-customers">0</p>
+                <div class="card-footer-link">Monthly Chit List <i class="fa-solid fa-arrow-right"></i></div>
+              </div>
+              <div class="stat-card">
+                <h3 style="font-size:0.8rem;">Chit Total Value</h3>
+                <p class="stat-value" id="stat-monthlychit-value">₹0</p>
+              </div>
+              <div class="stat-card highlight">
+                <h3 style="font-size:0.8rem;">Chit Pending Dues</h3>
+                <p class="stat-value" id="stat-monthlychit-dues">₹0</p>
+              </div>
+            </div>
+
+            <!-- NORMAL DUE CATEGORY STATS -->
+            <h3 style="margin-top: 50px; margin-bottom: 10px; font-size: 1.2rem; color: var(--text-secondary); border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">Normal Due Category</h3>
+            
+            <h4 style="margin-top: 20px; color: var(--text-primary); opacity: 0.9;">Rice Account</h4>
+            <div class="stats-grid" style="margin-top: 15px;">
+              <div class="stat-card clickable" onclick="window.location.href='riceaccount.html'">
+                <h3 style="font-size:0.8rem;">Rice Customers</h3>
+                <p class="stat-value" id="stat-rice-customers">0</p>
+                <div class="card-footer-link">Rice List <i class="fa-solid fa-arrow-right"></i></div>
+              </div>
+              <div class="stat-card">
+                <h3 style="font-size:0.8rem;">Rice Due Value</h3>
+                <p class="stat-value" id="stat-rice-value">₹0</p>
+              </div>
+              <div class="stat-card highlight">
+                <h3 style="font-size:0.8rem;">Rice Pending Dues</h3>
+                <p class="stat-value" id="stat-rice-dues">₹0</p>
+              </div>
+            </div>
+
+            <div class="overview-welcome" style="margin-top: 40px; text-align: center; padding: 40px; background: rgba(255,255,255,0.02); border-radius: 20px; border: 1px dashed var(--border-color);">
+                <i class="fa-solid fa-gauge-high" style="font-size: 3rem; color: var(--primary-color); margin-bottom: 20px; opacity: 0.5;"></i>
+                <h3>Welcome to your Dashboard</h3>
+                <p style="color: var(--text-secondary); max-width: 500px; margin: 10px auto;">Click on any of the category cards above to view specific customer lists and manage their accounts.</p>
+            </div>
+          </div>
+        </main>
+      </section>
+    </div>
+
+    <script src="core.js"></script>
+    <script src="script.js"></script>
+    <script>
+      checkAuth('admin');
+      if(state.user) document.getElementById('admin-name').innerText = 'Welcome, ' + state.user.name;
+      loadAdminData();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Passbook - FinAgent Pro</title>
+    <link rel="stylesheet" href="style.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  </head>
+  <body>
+    <div id="app">
+      <section id="customer-dashboard-view" class="view active">
+        <header class="customer-header">
+          <h2>My Passbook</h2>
+          <div style="display: flex; gap: 10px;">
+            <button class="secondary-btn" onclick="openModal('customer-details-modal')">My Details</button>
+            <button class="secondary-btn" onclick="logout()">Logout</button>
+          </div>
+        </header>
+
+        <main class="customer-content">
+          <div class="balance-card">
+            <h3>Outstanding Balance</h3>
+            <p class="balance-amount" id="cust-total-due">₹0</p>
+            <p id="customer-due-date" class="due-date" style="margin-bottom: 20px;">Next Due: ---</p>
+            <div style="margin-top: 20px;">
+                <button class="primary-btn" onclick="goToPayment()" style="width: auto; padding: 12px 40px; border-radius: 30px; background: white; color: var(--primary-color); font-weight: 700;">
+                    <i class="fa-solid fa-credit-card" style="margin-right: 8px;"></i> Pay Now
+                </button>
+            </div>
+          </div>
+
+          <div class="active-accounts-section">
+            <h3 style="margin-bottom: 15px;">My Active Accounts</h3>
+            <div id="customer-accounts-list" class="accounts-grid"></div>
+          </div>
+
+          <h3>Recent Transactions</h3>
+          <ul class="transaction-list" id="customer-transactions"></ul>
+        </main>
+      </section>
+    </div>
+
+    <script src="core.js"></script>
+    <script src="script.js"></script>
+    <script>
+      checkAuth('customer');
+      if (state.user) {
+         const customer = customers.find(c => c.phone === state.user.phone);
+         if (customer) renderCustomerPassbook(customer);
+      }
+
+      function goToPayment() {
+          const balanceText = document.getElementById('cust-total-due').innerText;
+          const amount = balanceText.replace('₹', '').replace(/,/g, '');
+          window.location.href = `payment.html?amount=${amount}`;
+      }
+    </script>
+  </body>
+</html>
+
