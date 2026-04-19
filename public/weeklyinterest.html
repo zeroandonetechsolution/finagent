@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Monthly Interest - FinAgent Pro</title>
+    <title>Weekly Interest - FinAgent Pro</title>
     <link rel="stylesheet" href="style.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
@@ -13,15 +13,15 @@
       <section id="admin-dashboard-view" class="view active">
         <aside class="sidebar">
           <div class="brand"><i class="fa-solid fa-coins"></i> FinAgent</div>
-                              <nav>
+          <nav>
             <a href="admin.html" class="nav-btn "><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
             <a href="allcustomers.html" class="nav-btn "><i class="fa-solid fa-users"></i> All Customers</a>
             
             <div class="nav-label" style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin: 15px 0 5px 10px; opacity: 0.7; font-weight: 600;">Finance</div>
             <a href="weeklycust.html" class="nav-btn "><i class="fa-solid fa-calendar-week"></i> Weekly Finance</a>
             <a href="monthlycust.html" class="nav-btn "><i class="fa-solid fa-calendar-days"></i> Monthly Finance</a>
-            <a href="monthlyinterest.html" class="nav-btn active"><i class="fa-solid fa-hand-holding-dollar"></i> Monthly Interest</a>
-            <a href="weeklyinterest.html" class="nav-btn "><i class="fa-solid fa-hand-dots"></i> Weekly Interest</a>
+            <a href="monthlyinterest.html" class="nav-btn "><i class="fa-solid fa-hand-holding-dollar"></i> Monthly Interest</a>
+            <a href="weeklyinterest.html" class="nav-btn active"><i class="fa-solid fa-hand-dots"></i> Weekly Interest</a>
             
             <div class="nav-label" style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin: 15px 0 5px 10px; opacity: 0.7; font-weight: 600;">Savings</div>
             <a href="diwalichit.html" class="nav-btn "><i class="fa-solid fa-burst"></i> Diwali Chit</a>
@@ -45,9 +45,9 @@
 
         <main class="main-content">
           <header>
-            <h2>Monthly Interest Management</h2>
+            <h2>Weekly Interest Management</h2>
             <div class="user-profile">
-              <button class="primary-btn small" onclick="openAddCustomerModal('Monthly Interest')">
+              <button class="primary-btn small" onclick="openAddCustomerModal('Weekly Interest')">
                 <i class="fa-solid fa-plus"></i> Add Customer
               </button>
             </div>
@@ -55,14 +55,14 @@
 
           <div class="admin-section active">
             <div class="section-header">
-              <h3>Monthly Interest Customers</h3>
+              <h3>Weekly Interest Customers</h3>
             </div>
             <div class="table-container">
               <table>
                 <thead>
-                  <tr><th>Name</th><th>Phone</th><th>Interest / Month</th><th>Actions</th><th>User Activity</th></tr>
+                  <tr><th>Name</th><th>Phone</th><th>Interest / Week</th><th>Actions</th><th>User Activity</th></tr>
                 </thead>
-                <tbody id="monthly-interest-table-body"></tbody>
+                <tbody id="weekly-interest-table-body"></tbody>
               </table>
             </div>
           </div>
@@ -75,17 +75,15 @@
     <script>
       checkAuth('admin');
       
-      // We need to define a custom rendering here because it doesn't fit the 'Monthly Finance' label exactly
-      function updateMonthlyInterestList() {
-        const pool = customers.filter(c => (c.financeAccounts || []).some(a => a.type === 'Monthly Interest'));
-        renderBasicTable('monthly-interest-table-body', pool, 'Monthly Interest');
+      function updateWeeklyInterestList() {
+        const pool = customers.filter(c => (c.financeAccounts || []).some(a => a.type === 'Weekly Interest'));
+        renderBasicTable('weekly-interest-table-body', pool, 'Weekly Interest');
       }
 
-      // Override updateCategorizedLists to include our new list
       const oldUpdate = window.updateCategorizedLists;
       window.updateCategorizedLists = function() {
           if(oldUpdate) oldUpdate();
-          updateMonthlyInterestList();
+          updateWeeklyInterestList();
       };
 
       updateCategorizedLists();

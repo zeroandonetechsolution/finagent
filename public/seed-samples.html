@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Seed Sample Customers</title>
+    <style>
+        body { background: #0d1117; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+        h2 { color: #7c3aed; }
+        #log { background: #161b22; border: 1px solid #30363d; border-radius: 10px; padding: 20px; width: 600px; max-width: 90vw; font-size: 0.85rem; line-height: 1.8; }
+        .ok { color: #10b981; } .info { color: #38bdf8; } .err { color: #ef4444; }
+        a { color: #7c3aed; font-weight: bold; text-decoration: none; padding: 10px 24px; border: 2px solid #7c3aed; border-radius: 8px; margin-top: 20px; display: inline-block; }
+        a:hover { background: #7c3aed; color: #fff; }
+    </style>
+</head>
+<body>
+<h2>🌱 Sample Customer Seeder</h2>
+<div id="log"></div>
+<a id="goto" href="admin.html" style="display:none;">→ Go to Admin Dashboard</a>
+
+<script>
+const log = (msg, cls='info') => {
+    const d = document.getElementById('log');
+    d.innerHTML += `<div class="${cls}">${msg}</div>`;
+};
+
+const sampleCustomers = [
+  {
+    uid: 'cust_sample_001', name: 'Arjun Krishnamurthy', phone: '9876543201',
+    altPhone: '9876543200', whatsapp: '9876543201', gpay: '9876543201',
+    address: '12, Gandhi Street, Thanjavur - 613001',
+    accountNo: '1234500001', ifsc: 'SBIN0001234', password: '123456',
+    financeAccounts: [
+      { uid: 'acc_s001a', type: 'Monthly Interest', loanAmount: 50000, monthlyDue: 4000, duration: 12, startDate: '2025-04-01', payments: {} }
+    ], transactions: [], pastAccounts: []
+  },
+  {
+    uid: 'cust_sample_002', name: 'Meena Subramaniam', phone: '9876543202',
+    altPhone: '', whatsapp: '9876543202', gpay: '9876543202',
+    address: '34, Anna Nagar, Trichy - 620018',
+    accountNo: '1234500002', ifsc: 'HDFC0001234', password: '123456',
+    financeAccounts: [
+      { uid: 'acc_s002a', type: 'Weekly Finance', loanAmount: 20000, weeklyDue: 500, duration: 40, startDate: '2025-06-01', payments: {} }
+    ], transactions: [], pastAccounts: []
+  },
+  {
+    uid: 'cust_sample_003', name: 'Ravi Shankar', phone: '9876543203',
+    altPhone: '9600000001', whatsapp: '9876543203', gpay: '',
+    address: '7, Nehru Road, Chennai - 600001',
+    accountNo: '1234500003', ifsc: 'ICIC0001234', password: '123456',
+    financeAccounts: [
+      { uid: 'acc_s003a', type: 'Diwali Chit', loanAmount: 50000, weeklyDue: 961, duration: 52, startDate: '2025-01-05', totalCustomers: 20, payments: {} }
+    ], transactions: [], pastAccounts: []
+  },
+  {
+    uid: 'cust_sample_004', name: 'Lakshmi Devi', phone: '9876543204',
+    altPhone: '', whatsapp: '9876543204', gpay: '9876543204',
+    address: '8, Market Road, Salem - 636001',
+    accountNo: '1234500004', ifsc: 'SBIN0004567', password: '123456',
+    financeAccounts: [
+      { uid: 'acc_s004a', type: 'Monthly Finance', loanAmount: 30000, monthlyDue: 3000, duration: 10, startDate: '2025-03-01', payments: {} }
+    ], transactions: [], pastAccounts: []
+  },
+  {
+    uid: 'cust_sample_005', name: 'Selvam Periyasamy', phone: '9876543205',
+    altPhone: '9700000002', whatsapp: '9876543205', gpay: '9876543205',
+    address: '22, Kovai Road, Erode - 638001',
+    accountNo: '1234500005', ifsc: 'KARB0001234', password: '123456',
+    financeAccounts: [
+      { uid: 'acc_s005a', type: 'Rice Account', loanAmount: 15000, weeklyDue: 300, duration: 50, startDate: '2025-02-01', riceBrand: 'Sona Masoori', riceKg: 25, payments: {} }
+    ], transactions: [], pastAccounts: []
+  },
+  {
+    uid: 'cust_sample_006', name: 'Priya Rajan', phone: '9876543206',
+    altPhone: '', whatsapp: '9876543206', gpay: '9876543206',
+    address: '5, Cross Street, Madurai - 625001',
+    accountNo: '1234500006', ifsc: 'HDFC0005678', password: '123456',
+    financeAccounts: [
+      { uid: 'acc_s006a', type: 'Monthly Interest', loanAmount: 100000, monthlyDue: 8000, duration: 24, startDate: '2024-12-01',
+        payments: { '2025-01-01': { status: 'paid', interest: 0 }, '2025-02-01': { status: 'paid', interest: 0 }, '2025-03-01': { status: 'paid', interest: 0 } } }
+    ], transactions: [], pastAccounts: []
+  },
+  {
+    uid: 'cust_sample_007', name: 'Murugan Pillai', phone: '9876543207',
+    altPhone: '', whatsapp: '9876543207', gpay: '',
+    address: '15, Bazar Street, Tirunelveli - 627001',
+    accountNo: '1234500007', ifsc: 'IOBA0001234', password: '123456',
+    financeAccounts: [
+      { uid: 'acc_s007a', type: 'Pongal Chit', loanAmount: 50000, weeklyDue: 961, duration: 52, startDate: '2025-01-12', totalCustomers: 20, payments: {} }
+    ], transactions: [], pastAccounts: []
+  },
+  {
+    uid: 'cust_sample_008', name: 'Kavitha Nair', phone: '9876543208',
+    altPhone: '9800000003', whatsapp: '9876543208', gpay: '9876543208',
+    address: '9, Temple Lane, Coimbatore - 641001',
+    accountNo: '1234500008', ifsc: 'CNRB0001234', password: '123456',
+    financeAccounts: [
+      { uid: 'acc_s008a', type: 'Monthly Finance', loanAmount: 75000, monthlyDue: 7500, duration: 10, startDate: '2025-05-01', payments: {} }
+    ], transactions: [], pastAccounts: []
+  },
+  {
+    uid: 'cust_sample_009', name: 'Senthil Kumar', phone: '9876543209',
+    altPhone: '', whatsapp: '9876543209', gpay: '9876543209',
+    address: '3, Lake View, Vellore - 632001',
+    accountNo: '1234500009', ifsc: 'PUNB0001234', password: '123456',
+    financeAccounts: [
+      { uid: 'acc_s009a', type: 'Weekly Finance', loanAmount: 10000, weeklyDue: 250, duration: 40, startDate: '2025-07-06', payments: {} },
+      { uid: 'acc_s009b', type: 'Monthly Interest', loanAmount: 25000, monthlyDue: 2000, duration: 12, startDate: '2025-08-01', payments: {} }
+    ], transactions: [], pastAccounts: []
+  },
+  {
+    uid: 'cust_sample_010', name: 'Anitha Balakrishnan', phone: '9876543210',
+    altPhone: '9500000004', whatsapp: '9876543210', gpay: '9876543210',
+    address: '18, Peel Street, Pondicherry - 605001',
+    accountNo: '1234500010', ifsc: 'SBIN0007890', password: '123456',
+    financeAccounts: [
+      { uid: 'acc_s010a', type: 'Monthly Chit', loanAmount: 50000, monthlyDue: 2500, duration: 20, startDate: '2025-04-01', totalCustomers: 20, payments: {} }
+    ], transactions: [], pastAccounts: []
+  },
+  {
+    uid: 'cust_sample_011', name: 'Dinesh Raj', phone: '9876543211',
+    altPhone: '', whatsapp: '9876543211', gpay: '9876543211',
+    address: '27, East Car Street, Kumbakonam - 612001',
+    accountNo: '1234500011', ifsc: 'TMBL0001234', password: '123456',
+    financeAccounts: [
+      { uid: 'acc_s011a', type: 'Monthly Interest', loanAmount: 40000, monthlyDue: 3200, duration: 18, startDate: '2025-02-15',
+        payments: { '2025-03-15': { status: 'paid', interest: 0 }, '2025-04-15': { status: 'paid', interest: 0 } } }
+    ], transactions: [], pastAccounts: []
+  },
+  {
+    uid: 'cust_sample_012', name: 'Valli Murugesan', phone: '9876543212',
+    altPhone: '9400000005', whatsapp: '9876543212', gpay: '',
+    address: '6, South Street, Karaikudi - 630001',
+    accountNo: '', ifsc: '', password: '123456',
+    financeAccounts: [
+      { uid: 'acc_s012a', type: 'Diwali Chit', loanAmount: 50000, weeklyDue: 961, duration: 52, startDate: '2025-01-05', totalCustomers: 20,
+        payments: { '2025-01-12': { status: 'paid', interest: 0 }, '2025-01-19': { status: 'paid', interest: 0 }, '2025-01-26': { status: 'paid', interest: 0 } } }
+    ], transactions: [], pastAccounts: []
+  },
+  {
+    uid: 'cust_sample_013', name: 'Suresh Babu', phone: '9876543213',
+    altPhone: '', whatsapp: '9876543213', gpay: '9876543213',
+    address: '11, Cotton Market, Tiruppur - 641601',
+    accountNo: '1234500013', ifsc: 'KVBL0001234', password: '123456',
+    financeAccounts: [
+      { uid: 'acc_s013a', type: 'Rice Account', loanAmount: 12000, weeklyDue: 240, duration: 50, startDate: '2025-03-02', riceBrand: 'Ponni', riceKg: 20, payments: {} }
+    ], transactions: [], pastAccounts: []
+  },
+  {
+    uid: 'cust_sample_014', name: 'Gomathi Sundaram', phone: '9876543214',
+    altPhone: '9300000006', whatsapp: '9876543214', gpay: '9876543214',
+    address: '44, Raja Street, Nagercoil - 629001',
+    accountNo: '1234500014', ifsc: 'FDRL0001234', password: '123456',
+    financeAccounts: [
+      { uid: 'acc_s014a', type: 'Monthly Finance', loanAmount: 60000, monthlyDue: 6000, duration: 10, startDate: '2025-01-20',
+        payments: { '2025-02-20': { status: 'paid', interest: 0 }, '2025-03-20': { status: 'paid', interest: 0 } } }
+    ], transactions: [], pastAccounts: []
+  },
+  {
+    uid: 'cust_sample_015', name: 'Karthikeyan S', phone: '9876543215',
+    altPhone: '', whatsapp: '9876543215', gpay: '9876543215',
+    address: '2, North Mada Street, Madurai - 625010',
+    accountNo: '1234500014', ifsc: 'YESB0001234', password: '123456',
+    financeAccounts: [
+      { uid: 'acc_s015a', type: 'Monthly Interest', loanAmount: 200000, monthlyDue: 16000, duration: 12, startDate: '2025-06-01', payments: {} }
+    ], transactions: [], pastAccounts: []
+  },
+  {
+    uid: 'cust_sample_016', name: 'Bharathi Ravindran', phone: '9876543216',
+    altPhone: '9200000007', whatsapp: '9876543216', gpay: '',
+    address: '56, Beach Road, Rameswaram - 623526',
+    accountNo: '1234500016', ifsc: 'SBIN0009012', password: '123456',
+    financeAccounts: [
+      { uid: 'acc_s016a', type: 'Weekly Finance', loanAmount: 50000, weeklyDue: 1250, duration: 40, startDate: '2024-11-03',
+        payments: { '2024-11-10': { status: 'paid', interest: 0 }, '2024-11-17': { status: 'paid', interest: 0 }, '2024-11-24': { status: 'paid', interest: 0 }, '2024-12-01': { status: 'paid', interest: 0 } } }
+    ], transactions: [], pastAccounts: []
+  },
+  {
+    uid: 'cust_sample_017', name: 'Jayanthi Krishnan', phone: '9876543217',
+    altPhone: '', whatsapp: '9876543217', gpay: '9876543217',
+    address: '19, K.K. Nagar, Chennai - 600078',
+    accountNo: '1234500017', ifsc: 'ICIC0005678', password: '123456',
+    financeAccounts: [
+      { uid: 'acc_s017a', type: 'Monthly Chit', loanAmount: 100000, monthlyDue: 5000, duration: 20, startDate: '2025-03-01', totalCustomers: 20, payments: {} }
+    ], transactions: [], pastAccounts: []
+  },
+  {
+    uid: 'cust_sample_018', name: 'Pandian Rajasekaran', phone: '9876543218',
+    altPhone: '9100000008', whatsapp: '9876543218', gpay: '9876543218',
+    address: '33, Periyar Nagar, Dindigul - 624001',
+    accountNo: '1234500018', ifsc: 'HDFC0009012', password: '123456',
+    financeAccounts: [
+      { uid: 'acc_s018a', type: 'Pongal Chit', loanAmount: 50000, weeklyDue: 961, duration: 52, startDate: '2025-01-12', totalCustomers: 20, payments: {} },
+      { uid: 'acc_s018b', type: 'Monthly Interest', loanAmount: 30000, monthlyDue: 2400, duration: 12, startDate: '2025-04-01', payments: {} }
+    ], transactions: [], pastAccounts: []
+  },
+  {
+    uid: 'cust_sample_019', name: 'Suganya Dhandapani', phone: '9876543219',
+    altPhone: '', whatsapp: '9876543219', gpay: '9876543219',
+    address: '8, Railway Colony, Villupuram - 605602',
+    accountNo: '1234500019', ifsc: 'CSBK0001234', password: '123456',
+    financeAccounts: [
+      { uid: 'acc_s019a', type: 'Rice Account', loanAmount: 18000, weeklyDue: 360, duration: 50, startDate: '2025-02-02', riceBrand: 'Basmati', riceKg: 30, payments: {} }
+    ], transactions: [], pastAccounts: []
+  },
+  {
+    uid: 'cust_sample_020', name: 'Tamilarasan Velayutham', phone: '9876543220',
+    altPhone: '9000000009', whatsapp: '9876543220', gpay: '9876543220',
+    address: '14, Sakthi Nagar, Oddanchatram - 624619',
+    accountNo: '1234500020', ifsc: 'SBIN0012345', password: '123456',
+    financeAccounts: [
+      { uid: 'acc_s020a', type: 'Monthly Interest', loanAmount: 80000, monthlyDue: 6400, duration: 12, startDate: '2025-09-01', payments: {} },
+      { uid: 'acc_s020b', type: 'Diwali Chit', loanAmount: 50000, weeklyDue: 961, duration: 52, startDate: '2025-01-05', totalCustomers: 20, payments: {} }
+    ], transactions: [], pastAccounts: []
+  }
+];
+
+try {
+    const existingRaw = localStorage.getItem('finagent_customers');
+    const existing = existingRaw ? JSON.parse(existingRaw) : [];
+    const existingPhones = new Set(existing.map(c => c.phone));
+
+    log(`📋 Existing customers in DB: <strong>${existing.length}</strong>`);
+
+    let added = 0, skipped = 0;
+    const toAdd = [];
+    sampleCustomers.forEach(c => {
+        if (existingPhones.has(c.phone)) {
+            log(`⏭️ Skipped (already exists): ${c.name} (${c.phone})`, 'info');
+            skipped++;
+        } else {
+            toAdd.push(c);
+        }
+    });
+
+    const merged = [...existing, ...toAdd];
+    localStorage.setItem('finagent_customers', JSON.stringify(merged));
+    added = toAdd.length;
+
+    toAdd.forEach(c => log(`✅ Added: ${c.name} — ${c.financeAccounts.map(a=>a.type).join(', ')}`, 'ok'));
+
+    log(``, 'info');
+    log(`🎉 Done! Added <strong>${added}</strong> customers, skipped <strong>${skipped}</strong>. Total now: <strong>${merged.length}</strong>`, 'ok');
+
+    document.getElementById('goto').style.display = 'inline-block';
+
+    // Auto redirect after 2 seconds
+    setTimeout(() => { window.location.href = 'admin.html'; }, 2500);
+} catch(e) {
+    log(`❌ Error: ${e.message}`, 'err');
+}
+</script>
+</body>
+</html>

@@ -2,32 +2,22 @@
 
 :root {
     /* Playful/Glassmorphism Palette */
-    /* Vibrant Theme Colors */
-    --primary-color: #FF6B6B;      /* Coral */
+    --primary-color: #FF6B6B;      /* Coral Red */
     --primary-hover: #ff5252;
-    --secondary-color: #38bdf8;    /* Bright Sky Blue */
-    --success-color: #2D6A4F;      /* Forest Green (for text/status) */
-    --success-light: #D1FAE5;      /* Mint Green (for backgrounds) */
-    --danger-color: #E53E3E;       /* Strong Red */
-    --danger-light: #FEE2E2;       /* Soft Red */
-    --warning-color: #D69E2E;      /* Strong Gold */
-    --warning-light: #FEF3C7;      /* soft Gold */
-    --info-color: #4A5568; 
+    --secondary-color: #4ECDC4;    /* Teal */
     
-    --bg-gradient: #EBEEF2;         /* Solid gray background for better card contrast */
-    --surface-color: #FFFFFF;
-    --surface-hover: #FDFBF7;
-    --border-color: #D1D5DB;        /* Much darker gray border */
+    --bg-gradient: #FDFBF7;
+    --surface-color: rgba(255, 255, 255, 0.7);
+    --surface-hover: rgba(255, 255, 255, 0.9);
+    --border-color: rgba(255, 255, 255, 0.5);
     
-    --text-primary: #000000;         /* Pure Black */
-    --text-secondary: #1F2937;      /* Deep Gray-Blue */
-    --text-meta: #374151;
+    --text-primary: #2D3436;
+    --text-secondary: #636E72;
     
-    /* Readable Content Colors */
-    --text-success: #059669;       /* Solid Green */
-    --text-danger: #DC2626;        /* Solid Red */
-    --text-warning: #D97706;       /* Solid Amber */
-    --text-info: #2563EB;          /* Solid Blue */
+    --success-color: #A8E6CF;
+    --danger-color: #FF8B94;
+    --warning-color: #FFD93D;
+    --info-color: #6C5B7B;
     
     --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
     
@@ -40,7 +30,6 @@
     padding: 0;
     box-sizing: border-box;
     font-family: var(--font-body);
-    font-weight: 600; /* Bolder by default */
 }
 
 html {
@@ -103,12 +92,11 @@ button {
 
 .primary-btn {
     background: var(--primary-color);
-    color: white !important;
+    color: var(--text-primary);
     padding: 12px 24px;
-    border-radius: 50px; /* Playful rounded */
-    font-weight: 700;
+    border-radius: 8px;
+    font-weight: 600;
     width: 100%;
-    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
 }
 
 .primary-btn:hover {
@@ -123,18 +111,16 @@ button {
 }
 
 .secondary-btn {
-    background: white;
-    border: 1px solid var(--border-color);
+    background: transparent;
+    border: 1px solid var(--border-color); backdrop-filter: blur(12px); box-shadow: var(--glass-shadow);
     color: var(--text-secondary);
     padding: 8px 16px;
-    border-radius: 12px;
-    font-weight: 600;
+    border-radius: 6px;
 }
 
 .secondary-btn:hover {
-    background: var(--bg-gradient);
-    border-color: var(--primary-color);
-    color: var(--primary-color);
+    background: rgba(255,255,255,0.05);
+    color: var(--text-primary);
 }
 
 /* --- LOGIN VIEW --- */
@@ -142,9 +128,9 @@ button {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: radial-gradient(circle at 0% 0%, rgba(255, 107, 107, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 100% 100%, rgba(78, 205, 196, 0.1) 0%, transparent 50%),
-                var(--bg-gradient);
+    background: radial-gradient(circle at 0% 0%, rgba(79, 70, 229, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(79, 70, 229, 0.1) 0%, transparent 50%),
+                #0f172a;
     animation: bgPulse 15s ease infinite;
 }
 
@@ -191,15 +177,12 @@ button {
 
 .brand-header h1 {
     font-size: 1.8rem;
-    font-weight: 800;
+    font-weight: 700;
 }
 
-.text-highlight {
-    background: linear-gradient(120deg, var(--primary-color), var(--secondary-color));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    display: inline-block;
-    font-weight: 800;
+.highlight {
+    color: var(--primary-color);
+    text-shadow: 0 0 20px rgba(79, 70, 229, 0.5);
 }
 
 .brand-header p {
@@ -253,9 +236,9 @@ button {
     width: 100%;
     padding: 12px;
     margin-bottom: 15px;
-    background: white;
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
+    background: rgba(255,255,255,0.4);
+    border: 1px solid var(--border-color); backdrop-filter: blur(12px); box-shadow: var(--glass-shadow);
+    border-radius: 8px;
     color: var(--text-primary);
 }
 
@@ -311,8 +294,8 @@ button {
 }
 
 .sidebar .brand {
-    font-size: 1.6rem;
-    font-weight: 800;
+    font-size: 1.5rem;
+    font-weight: 700;
     margin-bottom: 40px;
     color: var(--text-primary);
     display: flex;
@@ -326,13 +309,12 @@ button {
     padding: 12px 16px;
     margin-bottom: 5px;
     background: transparent;
-    color: var(--text-primary); /* Bolder color */
+    color: var(--text-secondary);
     border-radius: 8px;
     display: flex;
     align-items: center;
     gap: 12px;
-    font-size: 1rem;
-    font-weight: 700; /* Bold nav buttons */
+    font-size: 0.95rem;
     transition: all 0.2s;
     text-decoration: none;
 }
@@ -343,9 +325,8 @@ button {
 }
 
 .nav-btn.active {
-    background: var(--primary-color) !important;
-    color: white !important;
-    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+    background: rgba(79, 70, 229, 0.1);
+    color: var(--primary-color);
 }
 
 .nav-btn.logout {
@@ -366,13 +347,7 @@ button {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 40px;
-}
-
-.main-content header h2 {
-    font-size: 2.2rem;
-    font-weight: 800;
-    color: var(--text-primary);
+    margin-bottom: 30px;
 }
 
 .user-profile {
@@ -401,15 +376,12 @@ button {
 }
 
 .stat-card {
-    background: white;
-    border: 1px solid var(--border-color);
-    border-left: 5px solid var(--primary-color); /* Colorful accent to define the space */
-    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    background: var(--surface-color);
+    border: 1px solid var(--border-color); backdrop-filter: blur(12px); box-shadow: var(--glass-shadow);
     padding: 24px;
     border-radius: 16px;
     transition: all 0.3s ease;
     position: relative;
-    overflow: hidden;
 }
 
 .stat-card.clickable {
@@ -439,37 +411,28 @@ button {
 }
 
 .stat-card h3 {
-    color: #2D3436; /* Dark slate */
-    font-size: 1rem;
-    font-weight: 800;
-    margin-bottom: 12px;
-    letter-spacing: 0.02em;
-    text-transform: uppercase;
-    border-bottom: 2px solid rgba(0,0,0,0.05); /* Very subtle separator */
-    padding-bottom: 8px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 8px;
 }
 
 .stat-value {
-    font-size: 2.2rem;
-    font-weight: 800;
-    color: #000000 !important; /* Force deep black for absolute visibility */
-    display: block;
-    margin-top: 10px;
+    font-size: 2rem;
+    font-weight: 700;
 }
 
-/* Card Specific Highlights */
-.stat-card.highlight {
-    border-left: 8px solid var(--primary-color);
-    background: linear-gradient(to right, rgba(255, 107, 107, 0.05), white);
+.stat-card.highlight .stat-value {
+    color: var(--primary-color);
 }
 
 .stats-label {
     text-align: center;
-    color: #4A5568;
-    font-size: 0.95rem; /* Larger footer text */
+    color: var(--text-secondary);
+    font-size: 0.85rem;
     margin-top: -15px;
-    margin-bottom: 30px;
-    font-weight: 700;
+    margin-bottom: 25px;
+    opacity: 0.8;
 }
 
 .stats-label i {
@@ -713,15 +676,15 @@ tr:last-child td {
 }
 
 .modal-content {
-    background: white;
-    padding: 30px;
-    border-radius: 20px;
-    width: 90%;
-    max-width: 800px;
-    max-height: 98vh; /* Maximum height to avoid cutting off bits */
-    overflow-y: auto; /* Allow scrolling the whole modal if needed */
+    background: rgba(255,255,255,0.85); backdrop-filter: blur(16px);
+    padding: 40px;
+    border-radius: 24px;
+    width: 95%;
+    max-width: 700px;
+    max-height: 90vh;
+    overflow-y: auto;
     position: relative;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border-color); backdrop-filter: blur(12px); box-shadow: var(--glass-shadow);
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
@@ -776,17 +739,17 @@ tr:last-child td {
 
 .form-group label {
     display: block;
-    font-size: 0.95rem; /* Larger labels */
-    color: var(--text-primary); /* Darker for labels */
+    font-size: 0.85rem;
+    color: var(--text-secondary);
     margin-bottom: 8px;
-    font-weight: 700; /* Bold labels */
+    font-weight: 500;
 }
 
 .modal form input, .modal form textarea, .modal form select {
     width: 100%;
     padding: 12px 16px;
-    background: white;
-    border: 1px solid var(--border-color);
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid var(--border-color); backdrop-filter: blur(12px); box-shadow: var(--glass-shadow);
     border-radius: 10px;
     color: var(--text-primary);
     font-size: 0.95rem;
@@ -1156,11 +1119,10 @@ tr:last-child td {
 }
 
 .p-label {
-    font-size: 0.9rem;
-    color: var(--text-primary);
+    font-size: 0.75rem;
+    color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    font-weight: 700;
 }
 
 .p-value {
@@ -1179,9 +1141,9 @@ tr:last-child td {
     text-transform: uppercase;
 }
 
-.badge-success { background: var(--success-light); color: var(--success-color); border: 1px solid rgba(0,0,0,0.05); }
-.badge-warning { background: var(--warning-light); color: var(--warning-color); border: 1px solid rgba(0,0,0,0.05); }
-.badge-info { background: var(--surface-color); color: var(--info-color); border: 1px solid rgba(0,0,0,0.05); }
+.badge-success { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+.badge-warning { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+.badge-info { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
 
 /* IFSC Finder Styles */
 .finder-step.hidden {
@@ -1249,15 +1211,13 @@ tr:last-child td {
 }
 
 .selectable-item:hover {
-    background: rgba(255, 255, 255, 0.8) !important;
+    background: rgba(255, 255, 255, 0.1) !important;
     border-color: var(--primary-color);
     transform: translateX(5px);
 }
 /* --- EXCEL TABLE STYLES --- */
 .excel-table-container {
     overflow-x: auto;
-    overflow-y: auto;
-    max-height: 450px; /* Fixed height for table scrolling */
     border-radius: 12px;
     border: 1px solid var(--border-color); backdrop-filter: blur(12px); box-shadow: var(--glass-shadow);
     background: rgba(255, 255, 255, 0.4);
@@ -1270,18 +1230,17 @@ tr:last-child td {
 }
 
 .excel-table th {
-    background: #F8FAFC;
-    color: var(--text-primary);
-    font-weight: 800;
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--text-secondary);
+    font-weight: 600;
     text-transform: uppercase;
     font-size: 0.75rem;
     letter-spacing: 0.05em;
-    padding: 15px;
+    padding: 12px 15px;
     border-bottom: 2px solid var(--border-color);
     text-align: left;
     position: sticky;
-    top: -1px; /* Sticks to the top of container */
-    z-index: 10;
+    top: 0;
 }
 
 .excel-table td {
@@ -1299,8 +1258,7 @@ tr:last-child td {
 }
 
 .excel-table tr.paid td {
-    color: #4A5568 !important; /* Steel Gray for paid rows */
-    background: rgba(45, 106, 79, 0.03);
+    color: rgba(255, 255, 255, 0.8);
 }
 
 .excel-row-num {
@@ -1311,36 +1269,32 @@ tr:last-child td {
 }
 
 .excel-status-badge {
-    padding: 6px 12px;
-    border-radius: 8px;
-    font-size: 0.8rem;
-    font-weight: 700;
-    display: flex; /* Changed from inline-flex */
-    flex-direction: column; /* Stack status and time */
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-flex;
     align-items: center;
-    gap: 2px;
-    width: fit-content;
+    gap: 5px;
 }
 
 .excel-status-badge.paid {
-    background: var(--success-light);
+    background: rgba(16, 185, 129, 0.2);
     color: var(--success-color);
-    border: 1px solid rgba(0,0,0,0.05);
 }
 
 .excel-status-badge.pending {
-    background: rgba(0, 0, 0, 0.05);
-    color: var(--text-primary);
-    border: 1px solid rgba(0,0,0,0.1);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-secondary);
 }
 
 .excel-action-btn {
     padding: 6px 12px;
-    border-radius: 8px;
+    border-radius: 6px;
     font-size: 0.8rem;
-    background: #EBF4FF;
-    color: var(--text-info);
-    border: 1px solid #BEE3F8;
+    background: rgba(79, 70, 229, 0.1);
+    color: var(--primary-color);
+    border: 1px solid rgba(79, 70, 229, 0.2);
     transition: all 0.2s;
 }
 
@@ -1357,85 +1311,6 @@ tr:last-child td {
 
 .excel-interest-val {
     font-weight: 700;
-    color: var(--text-danger);
+    color: var(--danger-color);
     min-width: 50px;
-}
-
-
-/* --- PLAYFUL BACKGROUND SHAPES --- */
-.bg-shape {
-    position: fixed;
-    border-radius: 50%;
-    filter: blur(80px);
-    z-index: -1;
-    animation: floatShape 15s infinite alternate ease-in-out;
-    pointer-events: none;
-}
-.shape-1 {
-    width: 600px;
-    height: 600px;
-    background: #FFB7B2; /* Coral-light */
-    top: -150px;
-    left: -150px;
-    opacity: 0.3; /* More subtle */
-}
-.shape-2 {
-    width: 500px;
-    height: 500px;
-    background: #B2F5EA; /* secondary-light */
-    top: 20%;
-    right: -100px;
-    opacity: 0.2;
-    animation-delay: -5s;
-}
-.shape-3 {
-    width: 550px;
-    height: 550px;
-    background: #FEF3C7; /* warning-light */
-    bottom: -100px;
-    left: 10%;
-    opacity: 0.2;
-    animation-delay: -2s;
-}
-
-@keyframes floatShape {
-    0% { transform: translate(0, 0) scale(1); }
-    50% { transform: translate(50px, 30px) scale(1.1); }
-    100% { transform: translate(-30px, 60px) scale(0.9); }
-}
-
-/* Enhancing glassmorphism */
-.glass-card {
-    background: white;
-    border: 1px solid var(--border-color);
-    border-radius: 24px;
-    box-shadow: 0 15px 45px rgba(0,0,0,0.1);
-}
-
-
-/* Section Headings Upgrade */
-.main-content > h3 {
-    font-size: 1.8rem !important;
-    font-weight: 850 !important;
-    color: #ffffff !important;
-    margin-top: 60px !important;
-    margin-bottom: 30px !important;
-    padding: 15px 25px !important;
-    background: linear-gradient(90deg, #1A1D1E, #4A5568) !important;
-    border-left: 10px solid var(--primary-color) !important;
-    border-radius: 12px !important;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
-    display: block !important;
-}
-
-.main-content > h4 {
-    font-size: 1.4rem !important;
-    font-weight: 850 !important;
-    color: var(--primary-color) !important;
-    margin-top: 45px !important;
-    margin-bottom: 20px !important;
-    padding-left: 15px !important;
-    border-left: 5px solid var(--primary-color) !important;
-    text-transform: uppercase;
-    letter-spacing: 1px;
 }

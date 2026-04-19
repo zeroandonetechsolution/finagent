@@ -336,19 +336,19 @@
         <div id="weekly-pay-summary" style="margin-bottom: 20px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 12px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; text-align: center;">
             <div>
                 <div id="weekly-pay-due-label" style="font-size: 0.8rem; color: var(--text-secondary);">Monthly Interest</div>
-                <div id="weekly-pay-due" style="font-weight: 700; font-size: 1.1rem; color: var(--success-color);"></div>
+                <div id="weekly-pay-due" style="font-weight: 700; font-size: 1.1rem; color: var(--text-success);"></div>
             </div>
             <div>
                 <div id="weekly-pay-paid-label" style="font-size: 0.8rem; color: var(--text-secondary);">Paid Interest</div>
-                <div id="weekly-pay-paid" style="font-weight: 700; font-size: 1.1rem; color: var(--success-color);"></div>
+                <div id="weekly-pay-paid" style="font-weight: 700; font-size: 1.1rem; color: var(--text-success);"></div>
             </div>
             <div>
                 <div id="weekly-pay-remaining-label" style="font-size: 0.8rem; color: var(--text-secondary);">Remaining Interest</div>
-                <div id="weekly-pay-remaining" style="font-weight: 700; font-size: 1.1rem; color: var(--danger-color);"></div>
+                <div id="weekly-pay-remaining" style="font-weight: 700; font-size: 1.1rem; color: var(--text-danger);"></div>
             </div>
             <div>
                 <div id="weekly-pay-total-label" style="font-size: 0.8rem; color: var(--text-secondary);">Full Amount</div>
-                <div id="weekly-pay-total" style="font-weight: 700; font-size: 1.1rem; color: var(--primary-color);"></div>
+                <div id="weekly-pay-total" style="font-weight: 700; font-size: 1.1rem; color: var(--text-info);"></div>
                 <div id="weekly-pay-settled-msg" style="font-size: 0.7rem; color: #10b981; margin-top: 4px; display: none; font-weight: 600;">Successfully Paid ✅</div>
             </div>
             <div id="weekly-pay-members-card" style="display: none;">
@@ -357,16 +357,26 @@
             </div>
         </div>
         
+        <!-- Chit Won Banner -->
+        <div id="chit-won-banner" style="display:none; margin-bottom: 15px; padding: 12px 18px; background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(245,158,11,0.05)); border: 1px solid rgba(245,158,11,0.4); border-radius: 12px; display:flex; align-items:center; gap:12px;">
+            <i class="fa-solid fa-trophy" style="color:#f59e0b; font-size:1.4rem;"></i>
+            <div>
+                <div style="font-weight:700; color:#f59e0b; font-size:0.95rem;">🎉 Chit Auction Won!</div>
+                <div id="chit-won-banner-text" style="font-size:0.82rem; color:var(--text-secondary); margin-top:2px;"></div>
+            </div>
+        </div>
         <div class="excel-table-container">
             <table class="excel-table">
                 <thead>
-                    <tr>
+    <tr>
                         <th class="excel-row-num">#</th>
                         <th id="excel-header-period">Period</th>
-                        <th>Interest</th>
                         <th>Due Date</th>
+                        <th>Amount</th>
+                        <th id="excel-header-festival-interest" style="display:none; color: #10b981;">Interest</th>
                         <th>Fine</th>
                         <th>Status</th>
+                        <th id="excel-header-chit-won" style="display:none; text-align:center; color: #f59e0b;"><i class="fa-solid fa-trophy"></i> Chit Won</th>
                         <th style="text-align: right;">Action</th>
                     </tr>
                 </thead>
@@ -517,6 +527,8 @@
             <!-- Members will be injected here -->
         </div>
         <div style="margin-top: 20px; text-align: center; border-top: 1px solid var(--border-color); padding-top: 15px;">
+            <button id="add-selected-members-btn" class="primary-btn" style="width: 100%; margin-bottom: 20px; display: none;" onclick="window.addSelectedCustomersToGroup()">Add Selected Members</button>
+
             <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 10px;">Don't see the customer in the list?</p>
             <button class="secondary-btn small" onclick="window.switchToNewCustomerInGroup()">
                 <i class="fa-solid fa-plus-circle"></i> Create New Customer

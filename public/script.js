@@ -60,10 +60,10 @@ function loadAdminData() {
         if (safeGet('stat-current-balance')) safeGet('stat-current-balance').innerText = formatMoney(totalSpends - collectedDues);
 
         let financePrincipal = 0, weeklyCurrentDue = 0, monthlyCurrentDue = 0, financeCount = 0;
-        let weeklyTotalValue = 0, monthlyTotalValue = 0, monthlyInterestTotalValue = 0;
+        let weeklyTotalValue = 0, monthlyTotalValue = 0, monthlyInterestTotalValue = 0, weeklyInterestTotalValue = 0;
         let savingsPrincipal = 0, savingsDues = 0, savingsCount = 0;
         let normalPrincipal = 0, normalDues = 0, normalCount = 0;
-        let monthlyInterestCurrentDue = 0;
+        let monthlyInterestCurrentDue = 0, weeklyInterestCurrentDue = 0;
 
         // Date helpers
         const today = new Date();
@@ -91,7 +91,7 @@ function loadAdminData() {
             const total = parseInt(acc.duration) || 0;
             let passed = 0;
             
-            if (acc.type === 'Weekly Finance' || acc.type === 'Rice Account') {
+            if (acc.type === 'Weekly Finance' || acc.type === 'Rice Account' || acc.type === 'Weekly Interest') {
                 passed = Math.floor(Math.abs(comparisonDate - firstDue) / (1000 * 60 * 60 * 24 * 7)) + 1;
             } else {
                 passed = (comparisonDate.getFullYear() - firstDue.getFullYear()) * 12 + (comparisonDate.getMonth() - firstDue.getMonth());
@@ -144,11 +144,14 @@ function loadAdminData() {
                     normalPrincipal += parseFloat(acc.loanAmount || 0) + accInterest;
                     normalDues += ((total - Math.min(passed, total)) * amt);
                 }
-                // Monthly Interest Category
-                else if (acc.type === 'Monthly Interest') {
-                    monthlyInterestTotalValue += parseFloat(acc.loanAmount || 0);
-                    if (passed > 0) {
-                        monthlyInterestCurrentDue += amt;
+                // Interest Based Accounts (Weekly/Monthly)
+                else if (acc.type === 'Monthly Interest' || acc.type === 'Weekly Interest') {
+                    if (acc.type === 'Monthly Interest') {
+                        monthlyInterestTotalValue += parseFloat(acc.loanAmount || 0);
+                        if (passed > 0) monthlyInterestCurrentDue += amt;
+                    } else {
+                        weeklyInterestTotalValue += parseFloat(acc.loanAmount || 0);
+                        if (passed > 0) weeklyInterestCurrentDue += amt;
                     }
                 }
             });
@@ -183,11 +186,14 @@ function loadAdminData() {
         if (safeGet('stat-weekly-customers')) safeGet('stat-weekly-customers').innerText = customers.filter(c => (c.financeAccounts || []).some(a => a.type === 'Weekly Finance')).length;
         if (safeGet('stat-monthly-customers')) safeGet('stat-monthly-customers').innerText = customers.filter(c => (c.financeAccounts || []).some(a => a.type === 'Monthly Finance')).length;
         if (safeGet('stat-monthlyinterest-customers')) safeGet('stat-monthlyinterest-customers').innerText = customers.filter(c => (c.financeAccounts || []).some(a => a.type === 'Monthly Interest')).length;
+        if (safeGet('stat-weeklyinterest-customers')) safeGet('stat-weeklyinterest-customers').innerText = customers.filter(c => (c.financeAccounts || []).some(a => a.type === 'Weekly Interest')).length;
         
         if (safeGet('stat-weekly-value')) safeGet('stat-weekly-value').innerText = formatMoney(weeklyTotalValue);
         if (safeGet('stat-monthly-value')) safeGet('stat-monthly-value').innerText = formatMoney(monthlyTotalValue);
         if (safeGet('stat-monthlyinterest-value')) safeGet('stat-monthlyinterest-value').innerText = formatMoney(monthlyInterestTotalValue);
         if (safeGet('stat-monthlyinterest-dues')) safeGet('stat-monthlyinterest-dues').innerText = formatMoney(monthlyInterestCurrentDue);
+        if (safeGet('stat-weeklyinterest-value')) safeGet('stat-weeklyinterest-value').innerText = formatMoney(weeklyInterestTotalValue);
+        if (safeGet('stat-weeklyinterest-dues')) safeGet('stat-weeklyinterest-dues').innerText = formatMoney(weeklyInterestCurrentDue);
 
         if (safeGet('stat-savings-customers')) safeGet('stat-savings-customers').innerText = savingsCount;
         if (safeGet('stat-savings-value')) safeGet('stat-savings-value').innerText = formatMoney(savingsPrincipal);
@@ -205,7 +211,8 @@ function updateCategorizedLists() {
     const monthlyCusts = customers.filter(c => (c.financeAccounts || []).some(a => a.type === 'Monthly Finance'));
     const diwaliCusts = customers.filter(c => (c.financeAccounts || []).some(a => a.type === 'Diwali Chit'));
     const pongalCusts = customers.filter(c => (c.financeAccounts || []).some(a => a.type === 'Pongal Chit'));
-    const monthlyChitCusts = customers.filter(c => (c.financeAccounts || []).some(a => a.type === 'Monthly Chit'));
+    const monthlyInterestCusts = customers.filter(c => (c.financeAccounts || []).some(a => a.type === 'Monthly Interest'));
+    const weeklyInterestCusts = customers.filter(c => (c.financeAccounts || []).some(a => a.type === 'Weekly Interest'));
     const riceCusts = customers.filter(c => (c.financeAccounts || []).some(a => a.type === 'Rice Account'));
 
     renderBasicTable('weekly-customer-table-body', weeklyCusts, 'Weekly Finance');
@@ -213,6 +220,8 @@ function updateCategorizedLists() {
     renderBasicTable('diwali-customer-table-body', diwaliCusts, 'Diwali Chit');
     renderBasicTable('pongal-customer-table-body', pongalCusts, 'Pongal Chit');
     renderBasicTable('monthly-chit-customer-table-body', monthlyChitCusts, 'Monthly Chit');
+    renderBasicTable('monthly-interest-customer-table-body', monthlyInterestCusts, 'Monthly Interest');
+    renderBasicTable('weekly-interest-customer-table-body', weeklyInterestCusts, 'Weekly Interest');
     renderBasicTable('rice-customer-table-body', riceCusts, 'Rice Account');
 }
 
@@ -224,6 +233,7 @@ const FINANCE_BTN_MAP = {
     'Pongal Chit':     { icon: 'fa-bowl-rice',      title: 'Update Pongal Finance' },
     'Monthly Chit':    { icon: 'fa-calendar-check',  title: 'Update Monthly Finance' },
     'Monthly Interest': { icon: 'fa-hand-holding-dollar', title: 'Update Monthly Interest' },
+    'Weekly Interest':  { icon: 'fa-hand-dots',           title: 'Update Weekly Interest' },
     'Rice Account':    { icon: 'fa-bucket',          title: 'Update Rice Account' },
 };
 
@@ -235,69 +245,75 @@ function renderBasicTable(targetId, pool, pageType) {
     pool.forEach(cust => {
         const index = customers.findIndex(c => c.phone === cust.phone);
         
-        let targetAccounts = [];
+        // Get ALL matching accounts for display info (but render only ONE row per customer)
+        let matchingAccounts = [];
         if (pageType) {
             (cust.financeAccounts || []).forEach((acc, accIdx) => {
-                if (acc.type === pageType) targetAccounts.push({ acc, accIdx });
+                if (acc.type === pageType) matchingAccounts.push({ acc, accIdx });
             });
-        } else {
-            targetAccounts = [{ acc: null, accIdx: null }];
         }
 
-        targetAccounts.forEach(item => {
-            const activeAcc = item.acc;
-            const singleAccIdx = item.accIdx;
-
-            let financeBtns = '';
-            if (pageType) {
-                const cfg = FINANCE_BTN_MAP[pageType];
-                if (cfg) {
-                    financeBtns = `<button class="secondary-btn" title="${cfg.title}" onclick="handleFinanceClick(${index}, ${singleAccIdx}, '${pageType}')"><i class="fa-solid ${cfg.icon}"></i></button>`;
-                }
-            } else {
-                financeBtns = (cust.financeAccounts || []).map((a, i) => {
-                    const cfg = FINANCE_BTN_MAP[a.type];
-                    if (!cfg) return '';
-                    return `<button class="secondary-btn" title="${a.type} (₹${(parseFloat(a.loanAmount)||0).toLocaleString()})" onclick="handleFinanceClick(${index}, ${i}, '${a.type}')"><i class="fa-solid ${cfg.icon}"></i></button>`;
-                }).join('');
+        // Finance action button — always ONE button per type; handleFinanceClick deals with multi-account picker
+        let financeBtns = '';
+        if (pageType) {
+            const cfg = FINANCE_BTN_MAP[pageType];
+            if (cfg) {
+                // Pass accIdx of first matching account; if multiple, handleFinanceClick shows picker
+                const firstAccIdx = matchingAccounts.length > 0 ? matchingAccounts[0].accIdx : 0;
+                financeBtns = `<button class="secondary-btn" title="${cfg.title}" onclick="handleFinanceClick(${index}, ${firstAccIdx}, '${pageType}')"><i class="fa-solid ${cfg.icon}"></i></button>`;
             }
+        } else {
+            financeBtns = (cust.financeAccounts || []).map((a, i) => {
+                const cfg = FINANCE_BTN_MAP[a.type];
+                if (!cfg) return '';
+                return `<button class="secondary-btn" title="${a.type} (₹${(parseFloat(a.loanAmount)||0).toLocaleString()})" onclick="handleFinanceClick(${index}, ${i}, '${a.type}')"><i class="fa-solid ${cfg.icon}"></i></button>`;
+            }).join('');
+        }
 
-            let accountInfo = '<span style="opacity:0.4">N/A</span>';
-            if (activeAcc) {
-                const p = activeAcc.payments?.['PRINCIPAL'];
-                const isPaid = p === 'paid' || p?.status === 'paid';
-                const amount = isPaid ? '0' : parseFloat(activeAcc.loanAmount || 0).toLocaleString();
-                const due = parseFloat(activeAcc.weeklyDue || activeAcc.monthlyDue || 0).toLocaleString();
-                const period = activeAcc.type.includes('Weekly') || activeAcc.type.includes('Rice') ? 'wk' : 'mo';
-                accountInfo = `<div><b style="${isPaid ? 'color:#10b981' : ''}">${isPaid ? '<i class="fa-solid fa-flag-checkered"></i> Settled' : '₹' + amount}</b></div><div style="font-size:0.75rem; opacity:0.7;">${isPaid ? 'Principal Paid' : '₹' + due + '/' + period}</div>`;
-            } else if (!pageType && cust.financeAccounts && cust.financeAccounts.length > 0) {
-                const totalLoan = cust.financeAccounts.reduce((sum, a) => sum + (parseFloat(a.loanAmount) || 0), 0);
-                accountInfo = `<div><b>₹${totalLoan.toLocaleString()}</b></div><div style="font-size:0.75rem; opacity:0.7;">${cust.financeAccounts.length} Active Accounts</div>`;
-            }
+        // Account info: if multiple accounts of same type, show combined summary
+        let accountInfo = '<span style="opacity:0.4">N/A</span>';
+        if (matchingAccounts.length === 1) {
+            const activeAcc = matchingAccounts[0].acc;
+            const p = activeAcc.payments?.['PRINCIPAL'];
+            const isPaid = p === 'paid' || p?.status === 'paid';
+            const amount = isPaid ? '0' : parseFloat(activeAcc.loanAmount || 0).toLocaleString();
+            const due = parseFloat(activeAcc.weeklyDue || activeAcc.monthlyDue || 0).toLocaleString();
+            const period = activeAcc.type.includes('Weekly') || activeAcc.type.includes('Rice') ? 'wk' : 'mo';
+            accountInfo = `<div><b style="${isPaid ? 'color:#10b981' : ''}">${isPaid ? '<i class="fa-solid fa-flag-checkered"></i> Settled' : '₹' + amount}</b></div><div style="font-size:0.75rem; opacity:0.7;">${isPaid ? 'Principal Paid' : '₹' + due + '/' + period}</div>`;
+        } else if (matchingAccounts.length > 1) {
+            // Multiple accounts of same type — show total + count badge
+            const totalLoan = matchingAccounts.reduce((sum, { acc }) => sum + (parseFloat(acc.loanAmount) || 0), 0);
+            const totalDue = matchingAccounts.reduce((sum, { acc }) => sum + parseFloat(acc.weeklyDue || acc.monthlyDue || 0), 0);
+            const period = pageType && (pageType.includes('Weekly') || pageType.includes('Rice')) ? 'wk' : 'mo';
+            accountInfo = `<div><b>₹${totalLoan.toLocaleString()}</b> <span style="font-size:0.7rem; background:rgba(124,58,237,0.2); color:var(--primary-color); padding:2px 6px; border-radius:10px; margin-left:4px;">${matchingAccounts.length} accounts</span></div><div style="font-size:0.75rem; opacity:0.7;">₹${totalDue.toLocaleString()}/${period} total</div>`;
+        } else if (!pageType && cust.financeAccounts && cust.financeAccounts.length > 0) {
+            const totalLoan = cust.financeAccounts.reduce((sum, a) => sum + (parseFloat(a.loanAmount) || 0), 0);
+            accountInfo = `<div><b>₹${totalLoan.toLocaleString()}</b></div><div style="font-size:0.75rem; opacity:0.7;">${cust.financeAccounts.length} Active Accounts</div>`;
+        }
 
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td><b>${cust.name}</b><br><small>${cust.address || ''}</small></td>
-                <td>${cust.phone}</td>
-                <td>${accountInfo}</td>
-                <td>
-                    <button class="secondary-btn" title="Send Money" onclick="window.location.href='admin-payout.html?cust=${cust.phone}'" style="color:var(--primary-color)"><i class="fa-solid fa-paper-plane"></i></button>
-                    <button class="secondary-btn" title="Edit" onclick="openEditModal(${index})"><i class="fa-solid fa-pen"></i></button>
-                    <button class="secondary-btn" title="Details" onclick="viewCustomerDetails(${index})"><i class="fa-solid fa-circle-info"></i></button>
-                    ${financeBtns}
-                    <button class="secondary-btn" title="Delete" onclick="deleteCustomer(${index})" style="color:var(--danger-color)"><i class="fa-solid fa-trash"></i></button>
-                </td>
-                <td>
-                  <div style="display:flex; gap:8px;">
-                    <button class="secondary-btn small" onclick="window.markUserActivity(${index}, 'active')" style="font-size:0.75rem; padding: 4px 8px; border-color:var(--success-color); color:var(--success-color)"><i class="fa-solid fa-check-circle" style="margin-right:2px;"></i> Active</button>
-                    <button class="secondary-btn small" onclick="window.markUserActivity(${index}, 'inactive')" style="font-size:0.75rem; padding: 4px 8px; border-color:var(--danger-color); color:var(--danger-color)"><i class="fa-solid fa-times-circle" style="margin-right:2px;"></i> Inactive</button>
-                  </div>
-                </td>
-            `;
-            tbody.appendChild(tr);
-        });
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><b>${cust.name}</b><br><small>${cust.address || ''}</small></td>
+            <td>${cust.phone}</td>
+            <td>${accountInfo}</td>
+            <td>
+                <button class="secondary-btn" title="Send Money" onclick="window.location.href='admin-payout.html?cust=${cust.phone}'" style="color:var(--primary-color)"><i class="fa-solid fa-paper-plane"></i></button>
+                <button class="secondary-btn" title="Edit" onclick="openEditModal(${index})"><i class="fa-solid fa-pen"></i></button>
+                <button class="secondary-btn" title="Details" onclick="viewCustomerDetails(${index})"><i class="fa-solid fa-circle-info"></i></button>
+                ${financeBtns}
+                <button class="secondary-btn" title="Delete" onclick="deleteCustomer(${index})" style="color:var(--danger-color)"><i class="fa-solid fa-trash"></i></button>
+            </td>
+            <td>
+              <div style="display:flex; gap:8px;">
+                <button class="secondary-btn small" onclick="window.markUserActivity(${index}, 'active')" style="font-size:0.75rem; padding: 4px 8px; border-color:var(--success-color); color:var(--success-color)"><i class="fa-solid fa-check-circle" style="margin-right:2px;"></i> Active</button>
+                <button class="secondary-btn small" onclick="window.markUserActivity(${index}, 'inactive')" style="font-size:0.75rem; padding: 4px 8px; border-color:var(--danger-color); color:var(--danger-color)"><i class="fa-solid fa-times-circle" style="margin-right:2px;"></i> Inactive</button>
+              </div>
+            </td>
+        `;
+        tbody.appendChild(tr);
     });
 }
+
 
 function renderChitGroups() {
     const list = safeGet('chit-groups-list');
@@ -489,18 +505,26 @@ function openFinanceSetup(index, type) {
     }
 
     if (type === 'Diwali Chit' || type === 'Pongal Chit') {
-        if (loanInput) loanInput.value = 50000;
+        if (loanInput) {
+            loanInput.value = 10400;
+            loanInput.readOnly = true;
+            loanInput.style.background = 'rgba(255,255,255,0.05)';
+        }
         safeGet('dynamic-fields').innerHTML = `
-            <div class="form-group"><label>Total Customers (Group Size)</label><input type="number" name="totalCustomers" value="20" required oninput="this.form.duration.value = this.value; window.generatePreview && window.generatePreview()"></div>
-            <div class="form-group"><label>Weekly Due (₹)</label><input type="number" name="weeklyDue" value="961" required oninput="window.generatePreview && window.generatePreview()"></div>
-            <div class="form-group"><label>Weeks (Duration)</label><input type="number" name="duration" value="20" required oninput="window.generatePreview && window.generatePreview()"></div>
+            <div class="form-group"><label>Weekly Due (₹)</label><input type="number" name="weeklyDue" value="200" required oninput="window.generatePreview && window.generatePreview()"></div>
+            <div class="form-group"><label>Weeks (Duration)</label><input type="number" name="duration" value="52" required oninput="window.generatePreview && window.generatePreview()"></div>
+            <div class="form-group"><label>Estimated Interest (auto-calculated) (₹)</label><input type="number" name="expectedInterest" value="1600" readonly style="background:rgba(255,255,255,0.05); color: var(--success-color); font-weight: bold;"></div>
         `;
     } else if (type === 'Monthly Chit') {
         if (loanInput) loanInput.value = 50000;
         safeGet('dynamic-fields').innerHTML = `
             <div class="form-group"><label>Total Customers (Group Size)</label><input type="number" name="totalCustomers" value="20" required oninput="this.form.duration.value = this.value; window.generatePreview && window.generatePreview()"></div>
-            <div class="form-group"><label>Monthly Due (₹)</label><input type="number" name="monthlyDue" value="2500" required oninput="window.generatePreview && window.generatePreview()"></div>
-            <div class="form-group"><label>Months (Duration)</label><input type="number" name="duration" value="20" required oninput="window.generatePreview && window.generatePreview()"></div>
+            <div class="form-group"><label>Monthly Due (₹) <small style="color:var(--text-secondary)">(Chit Value ÷ Members)</small></label><input type="number" name="monthlyDue" value="2500" required oninput="window.generatePreview && window.generatePreview()"></div>
+            <div class="form-group" style="opacity:0.6; pointer-events:none;">
+                <label>Months Duration <small style="color:#f59e0b;">⚡ Auto = Total Customers</small></label>
+                <input type="number" name="duration" value="20" required readonly style="border-color:rgba(245,158,11,0.4); background:rgba(245,158,11,0.05);">
+                <small style="color:#f59e0b; margin-top:4px; display:block;">Each customer wins the chit once — so no. of months = no. of members</small>
+            </div>
         `;
     } else if (type === 'Rice Account') {
         safeGet('dynamic-fields').innerHTML = `
@@ -509,10 +533,10 @@ function openFinanceSetup(index, type) {
             <div class="form-group"><label>Duration (Weeks)</label><input type="number" name="duration" required oninput="window.generatePreview && window.generatePreview()"></div>
             <div class="form-group"><label>Weekly Due Payment (₹)</label><input type="number" name="weeklyDue" required oninput="window.generatePreview && window.generatePreview()"></div>
         `;
-    } else if (type === 'Monthly Interest') {
+    } else if (type === 'Monthly Interest' || type === 'Weekly Interest') {
         safeGet('dynamic-fields').innerHTML = `
-            <div class="form-group"><label>Monthly Interest Payment (₹)</label><input type="number" name="monthlyDue" required oninput="window.generatePreview && window.generatePreview()"></div>
-            <div class="form-group"><label>Months (Predicted duration)</label><input type="number" name="duration" required oninput="window.generatePreview && window.generatePreview()"></div>
+            <div class="form-group"><label>${type} Payment (₹)</label><input type="number" name="monthlyDue" required oninput="window.generatePreview && window.generatePreview()"></div>
+            <div class="form-group"><label>Duration (Predicted)</label><input type="number" name="duration" required oninput="window.generatePreview && window.generatePreview()"></div>
         `;
     } else {
         const isWeekly = type.includes('Weekly');
@@ -549,13 +573,26 @@ window.generatePreview = function() {
     }
 
     const duration = parseInt(durationInput.value);
-    const loan = parseFloat(loanInput?.value || 0);
     const start = new Date(dateInput.value);
     
-    // Auto-calculate the due amount if loan and duration are provided
-    if (loan > 0 && duration > 0 && dueInput && type !== 'Monthly Interest') {
-        const calculatedDue = Math.round(loan / duration);
-        dueInput.value = calculatedDue;
+    if (type === 'Diwali Chit' || type === 'Pongal Chit') {
+        const wDue = parseFloat(dueInput?.value || 0);
+        if (wDue > 0 && duration > 0) {
+            if (loanInput) loanInput.value = Math.round(wDue * duration);
+            const intField = document.querySelector('#finance-setup-form input[name="expectedInterest"]');
+            if (intField) {
+                // weekly interest calculation base
+                const weeklyInterest = wDue * (30.76923076923 / 200);
+                intField.value = Math.round(weeklyInterest * duration);
+            }
+        }
+    } else {
+        const loan = parseFloat(loanInput?.value || 0);
+        // Auto-calculate the due amount if loan and duration are provided
+        if (loan > 0 && duration > 0 && dueInput && !type.includes('Interest')) {
+            const calculatedDue = Math.round(loan / duration);
+            dueInput.value = calculatedDue;
+        }
     }
     
     if(duration <= 0) {
@@ -577,7 +614,7 @@ window.generatePreview = function() {
             const d = String(currentDue.getDate()).padStart(2, '0');
             const m = String(currentDue.getMonth() + 1).padStart(2, '0');
             const y = String(currentDue.getFullYear()).slice(-2); // Short year for 4 col
-            hdml += `<div title="${d}/${m}/${y}">W${i}: <span style="color:#fff;">${d}/${m}</span></div>`;
+            hdml += `<div title="${d}/${m}/${y}">W${i}: <span style="color:var(--text-primary); font-weight:600;">${d}/${m}</span></div>`;
             currentDue.setDate(currentDue.getDate() + 7);
         }
     } else {
@@ -587,7 +624,7 @@ window.generatePreview = function() {
             const d = String(currentDue.getDate()).padStart(2, '0');
             const m = String(currentDue.getMonth() + 1).padStart(2, '0');
             const y = currentDue.getFullYear();
-            hdml += `<div>Month ${i}: <span style="color:#fff;">${d}/${m}/${y}</span></div>`;
+            hdml += `<div>Month ${i}: <span style="color:var(--text-primary); font-weight:600;">${d}/${m}/${y}</span></div>`;
             currentDue.setMonth(currentDue.getMonth() + 1);
         }
     }
@@ -1539,7 +1576,7 @@ window.handleFinanceClick = function(custIdx, accIdx, type) {
                 <div class="modal-content" style="max-width: 400px;">
                     <span class="close-btn" onclick="closeModal('dynamic-multi-account-modal')"><i class="fa-solid fa-xmark"></i></span>
                     <div class="modal-header">
-                        <h3>Select Passbook</h3>
+                        <h3>Select Account</h3>
                         <p style="font-size:0.8rem;color:var(--text-secondary);margin-top:5px;">This customer holds multiple <span id="dyn-multi-type" style="color:var(--primary-color)"></span> accounts.</p>
                     </div>
                     <div id="dyn-multi-list" style="display: grid; gap: 10px; margin-top: 20px;">
@@ -1561,9 +1598,9 @@ window.handleFinanceClick = function(custIdx, accIdx, type) {
             btn.style.display = 'flex';
             btn.style.alignItems = 'center';
             btn.style.gap = '10px';
-            btn.style.background = i === 0 ? 'rgba(0,0,0,0.3)' : 'var(--primary-color)';
+            btn.style.background = 'var(--primary-color)';
             
-            const label = i === 0 ? 'Original Passbook' : `New Passbook #${i+1}`;
+            const label = (i === matchingAccounts.length - 1) ? 'Current Account' : (matchingAccounts.length > 2 ? `Previous Account #${i+1}` : 'Previous Account');
             btn.innerHTML = `<i class="fa-solid fa-book-open"></i> <span>${label}</span> <small style="margin-left:auto;opacity:0.8;">(Principal: ₹${(parseFloat(acc.loanAmount)||0).toLocaleString()})</small>`;
             
             btn.onclick = () => {
@@ -1582,7 +1619,7 @@ window.openAccountPaymentManagement = function(custIdx, accIdx) {
     const acc = cust.financeAccounts[accIdx];
     if (!cust || !acc) return;
 
-    const isWeekly = acc.type.includes('Weekly') || acc.type.includes('Rice');
+    const isWeekly = acc.type.includes('Weekly') || acc.type.includes('Rice') || ['Diwali Chit', 'Pongal Chit'].includes(acc.type);
     const periodLabel = isWeekly ? 'Week' : 'Month';
     
     safeGet('weekly-pay-title').innerText = `Manage Payments: ${cust.name} (${acc.type})`;
@@ -1619,21 +1656,25 @@ window.openAccountPaymentManagement = function(custIdx, accIdx) {
     }
 
     const isSavings = ['Diwali Chit', 'Pongal Chit', 'Monthly Chit'].includes(acc.type);
+    const isFestivalChit = ['Diwali Chit', 'Pongal Chit'].includes(acc.type);
+    const interestMultiplier = isFestivalChit ? ((dueAmount / 200) * 30.76) : 0;
+    const earnedInterest = paidCount * interestMultiplier;
+    const totalExpectedReturn = isFestivalChit ? (totalLoan + (totalDuration * interestMultiplier)) : 0;
     
     safeGet('weekly-pay-due-label').innerText = `${periodLabel} ${isSavings ? 'Due' : 'Interest'}`;
     safeGet('weekly-pay-due').innerText = `₹${dueAmount.toLocaleString()}`;
 
-    safeGet('weekly-pay-paid-label').innerText = isSavings ? 'Paid Savings' : 'Paid Interest';
+    safeGet('weekly-pay-paid-label').innerText = isFestivalChit ? `Paid (+₹${Math.round(earnedInterest)} Int)` : (isSavings ? 'Paid Savings' : 'Paid Interest');
     safeGet('weekly-pay-paid').innerText = `₹${currentPaidInterest.toLocaleString()}`;
 
     safeGet('weekly-pay-remaining-label').innerText = isSavings ? 'Remaining Savings' : 'Remaining Interest';
     safeGet('weekly-pay-remaining').innerText = `₹${Math.max(0, currentRemainingInterest).toLocaleString()}`;
 
-    safeGet('weekly-pay-total-label').innerText = isSavings ? 'Chit Value' : 'Full Amount';
-    safeGet('weekly-pay-total').innerText = `₹${(isPrincipalPaid ? 0 : totalLoan).toLocaleString()}`;
+    safeGet('weekly-pay-total-label').innerText = isFestivalChit ? 'Expected Payout' : (isSavings ? 'Chit Value' : 'Full Amount');
+    safeGet('weekly-pay-total').innerText = isFestivalChit ? `₹${Math.round(totalExpectedReturn).toLocaleString()}` : `₹${(isPrincipalPaid ? 0 : totalLoan).toLocaleString()}`;
 
     let remaining;
-    if (acc.type === 'Monthly Interest') {
+    if (acc.type === 'Monthly Interest' || acc.type === 'Weekly Interest') {
         remaining = (isPrincipalPaid ? 0 : totalLoan) + currentRemainingInterest;
     } else if (isSavings) {
         remaining = currentRemainingInterest; // For savings, balance is just what's left to pay into the chit
@@ -1655,7 +1696,7 @@ window.openAccountPaymentManagement = function(custIdx, accIdx) {
     const membersCard = safeGet('weekly-pay-members-card');
     const summaryHeader = safeGet('weekly-pay-summary');
     if (membersCard && summaryHeader) {
-        if (isSavings) {
+        if (acc.type === 'Monthly Chit') {
             membersCard.style.display = 'block';
             summaryHeader.style.gridTemplateColumns = 'repeat(5, 1fr)';
             safeGet('weekly-pay-members').innerText = `${acc.totalCustomers || '—'}`;
@@ -1666,6 +1707,64 @@ window.openAccountPaymentManagement = function(custIdx, accIdx) {
     }
 
     safeGet('excel-header-period').innerText = periodLabel;
+
+    // Show/hide the "Chit Won" column header and banner
+    const chitWonHeader = safeGet('excel-header-chit-won');
+    const chitWonBanner = safeGet('chit-won-banner');
+    const festivalInterestHeader = safeGet('excel-header-festival-interest');
+    const isAuctionChit = ['Monthly Chit'].includes(acc.type);
+    
+    if (chitWonHeader) chitWonHeader.style.display = 'none'; // Always hidden - trophy is in action column now
+    if (festivalInterestHeader) festivalInterestHeader.style.display = isFestivalChit ? 'table-cell' : 'none';
+    
+    // --- BUILD GROUP-LEVEL CLAIMED ITERATIONS MAP ---
+    // Find the chit group this customer belongs to (for this account type)
+    const custPhone = cust.phone;
+    let groupMates = []; // other customers in same chit group
+    let claimedIterations = {}; // { iteration(1-based): 'Winner Name' }
+    
+    if (isAuctionChit) {
+        // Find the matching chit group
+        const matchedGroup = (window.chitGroups || []).find(g => 
+            g.type === acc.type && (g.memberIds || []).includes(custPhone)
+        );
+        if (matchedGroup) {
+            // Get all OTHER members' customers
+            groupMates = customers.filter(c => 
+                c.phone !== custPhone && (matchedGroup.memberIds || []).includes(c.phone)
+            );
+        } else {
+            // Fallback: match by same loanAmount + type + startDate (standalone chit accounts)
+            groupMates = customers.filter(c =>
+                c.phone !== custPhone &&
+                (c.financeAccounts || []).some(a =>
+                    a.type === acc.type &&
+                    a.loanAmount == acc.loanAmount &&
+                    a.startDate === acc.startDate
+                )
+            );
+        }
+        // Collect all iterations claimed by other group members
+        groupMates.forEach(mate => {
+            (mate.financeAccounts || []).forEach(a => {
+                if (a.type === acc.type && a.chitWonIteration) {
+                    claimedIterations[a.chitWonIteration] = mate.name;
+                }
+            });
+        });
+    }
+    
+    // Render banner if customer has already won
+    const wonIteration = acc.chitWonIteration || acc.chitWonMonth; // fallback for backwards compatibility
+    if (chitWonBanner) {
+        if (isAuctionChit && wonIteration) {
+            const wonLabel = `Month ${wonIteration}`;
+            safeGet('chit-won-banner-text').innerText = `This customer won the chit auction in ${wonLabel} and received ₹${totalLoan.toLocaleString()}. Monthly payments continue as normal.`;
+            chitWonBanner.style.display = 'flex';
+        } else {
+            chitWonBanner.style.display = 'none';
+        }
+    }
 
     // Generate Table Rows
     const tbody = safeGet('weekly-payment-table-body');
@@ -1692,14 +1791,62 @@ window.openAccountPaymentManagement = function(custIdx, accIdx) {
             continue;
         }
 
+        const isWonIteration = isAuctionChit && (acc.chitWonIteration === i);
+        const claimedByOther = isAuctionChit && !isWonIteration && claimedIterations[i]; // name of other winner
+        
         const tr = document.createElement('tr');
         if (statusData.status === 'paid') tr.classList.add('paid');
+        if (isWonIteration) {
+            tr.style.background = 'rgba(245,158,11,0.12)';
+            tr.style.border = '1px solid rgba(245,158,11,0.4)';
+        }
+        if (claimedByOther) {
+            tr.style.opacity = '0.65';
+        }
         
+        // Build trophy button for chit types (goes inside action cell)
+        let chitTrophyBtn = '';
+        if (isAuctionChit) {
+            if (claimedByOther) {
+                // Locked - won by another customer
+                chitTrophyBtn = `
+                    <button disabled title="Won by ${claimedByOther}" 
+                        style="background:none; border: 1.5px solid rgba(255,255,255,0.1); border-radius:8px; padding:4px 8px; cursor:not-allowed; color:rgba(255,255,255,0.2); font-size:0.8rem; opacity:0.5;">
+                        <i class="fa-solid fa-lock"></i>
+                        <span style="font-size:0.65rem; display:block; margin-top:1px;">Won by<br>${claimedByOther.split(' ')[0]}</span>
+                    </button>`;
+            } else if (isWonIteration) {
+                // This customer won this month
+                chitTrophyBtn = `
+                    <button onclick="toggleChitWon(${custIdx}, ${accIdx}, ${i})" 
+                        title="Click to remove Won mark" 
+                        style="background:linear-gradient(135deg,#f59e0b,#d97706); border:none; border-radius:8px; padding:4px 8px; cursor:pointer; color:#000; font-size:0.85rem; font-weight:700; box-shadow:0 0 10px rgba(245,158,11,0.4);">
+                        <i class="fa-solid fa-trophy"></i>
+                        <span style="font-size:0.65rem; display:block; margin-top:1px;">WON!</span>
+                    </button>`;
+            } else {
+                // Available to mark as won
+                chitTrophyBtn = `
+                    <button onclick="toggleChitWon(${custIdx}, ${accIdx}, ${i})" 
+                        title="Mark as Won Month" 
+                        style="background:none; border: 1.5px solid rgba(245,158,11,0.3); border-radius:8px; padding:4px 8px; cursor:pointer; color:rgba(245,158,11,0.5); font-size:0.85rem; transition:all 0.2s;">
+                        <i class="fa-solid fa-trophy"></i>
+                        <span style="font-size:0.65rem; display:block; margin-top:1px;">Settle</span>
+                    </button>`;
+            }
+        }
+
+        let festivalInterestTd = '';
+        if (isFestivalChit) {
+            festivalInterestTd = `<td style="color: #10b981; font-weight:600; background: rgba(16,185,129,0.05);">+₹${interestMultiplier.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>`;
+        }
+
         tr.innerHTML = `
-            <td class="excel-row-num">${i}</td>
-            <td style="font-weight:600;">${periodLabel} ${i}</td>
-            <td style="font-weight:600;">₹${(i * dueAmount).toLocaleString()}</td>
+            <td class="excel-row-num" style="${isWonIteration ? 'background:#f59e0b; color:#000; font-weight:800;' : ''}">${i}</td>
+            <td style="font-weight:600; ${isWonIteration ? 'color:#f59e0b;' : ''}">${periodLabel} ${i}</td>
             <td>${dateStr}</td>
+            <td style="font-weight:600;">₹${dueAmount.toLocaleString()}</td>
+            ${festivalInterestTd}
             <td>
                 <div class="excel-interest-cell">
                     <span class="excel-interest-val">₹${(statusData.interest || 0).toLocaleString()}</span>
@@ -1709,14 +1856,18 @@ window.openAccountPaymentManagement = function(custIdx, accIdx) {
                 </div>
             </td>
             <td>
-                <span class="excel-status-badge ${statusData.status}">
+                <div class="excel-status-badge ${statusData.status}">
                     ${statusData.status === 'paid' ? '<i class="fa-solid fa-circle-check"></i> Paid' : '<i class="fa-solid fa-circle-notch"></i> Pending'}
-                </span>
+                    ${statusData.status === 'paid' && statusData.paidAt ? `<div style="font-size: 0.65rem; margin-top: 2px; opacity: 0.8;">${statusData.paidAt}</div>` : ''}
+                </div>
             </td>
             <td style="text-align: right;">
-                <button class="primary-btn small" onclick="togglePeriodPayment(${custIdx}, ${accIdx}, '${isoDate}')" style="width: auto; background: ${statusData.status === 'paid' ? 'var(--danger-color)' : 'var(--success-color)'};">
-                    ${statusData.status === 'paid' ? 'Unmark' : 'Mark Paid'}
-                </button>
+                <div style="display:flex; gap:6px; justify-content:flex-end; align-items:flex-start; flex-wrap:wrap;">
+                    <button class="primary-btn small" onclick="togglePeriodPayment(${custIdx}, ${accIdx}, '${isoDate}')" style="width: auto; background: ${statusData.status === 'paid' ? 'var(--danger-color)' : 'var(--success-color)'}; white-space:nowrap;">
+                        ${statusData.status === 'paid' ? 'Unmark' : 'Mark Paid'}
+                    </button>
+                    ${chitTrophyBtn}
+                </div>
             </td>
         `;
         tbody.appendChild(tr);
@@ -1728,8 +1879,8 @@ window.openAccountPaymentManagement = function(custIdx, accIdx) {
         }
     }
 
-    // Add Principal Settlement Row for Monthly Interest
-    if (acc.type === 'Monthly Interest') {
+    // Add Principal Settlement Row for Interest Based Accounts
+    if (acc.type === 'Monthly Interest' || acc.type === 'Weekly Interest') {
         const pData = acc.payments['PRINCIPAL'] || { status: 'unpaid' };
         const principalStatus = pData.status;
         const tr = document.createElement('tr');
@@ -1768,8 +1919,18 @@ async function togglePeriodPayment(custIdx, accIdx, isoDate) {
     const currentStatus = acc.payments[isoDate]?.status || 'unpaid';
     const newStatus = currentStatus === 'paid' ? 'unpaid' : 'paid';
     
-    if (!acc.payments[isoDate]) acc.payments[isoDate] = { interest: 0 };
+    if (!acc.payments[isoDate]) acc.payments[isoDate] = { status: 'unpaid', interest: 0 };
     acc.payments[isoDate].status = newStatus;
+
+    // Record current date and time if marking as paid
+    if (newStatus === 'paid') {
+        const now = new Date();
+        const date = now.toLocaleDateString('en-GB');
+        const time = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+        acc.payments[isoDate].paidAt = `${date} ${time}`;
+    } else {
+        delete acc.payments[isoDate].paidAt;
+    }
     
     // Add date for principal settlement
     if (isoDate === 'PRINCIPAL' && newStatus === 'paid') {
@@ -1803,11 +1964,46 @@ async function addPeriodInterest(custIdx, accIdx, isoDate) {
     openAccountPaymentManagement(custIdx, accIdx); // Refresh
 }
 
+// Toggle Chit Won Month
+async function toggleChitWon(custIdx, accIdx, iterationNum) {
+    const acc = customers[custIdx].financeAccounts[accIdx];
+    const isAlreadyWon = acc.chitWonIteration === iterationNum || acc.chitWonMonth === iterationNum; // fallback
+    
+    if (isAlreadyWon) {
+        // Unmark
+        const ok = await window.showPopup({
+            title: 'Remove Won Mark',
+            message: 'Remove the "Chit Won" mark from this month?',
+            confirmText: 'Remove',
+            isDanger: true
+        });
+        if (!ok) return;
+        delete acc.chitWonIteration;
+        delete acc.chitWonMonth;
+    } else {
+        // If another month already marked, ask to replace
+        if (acc.chitWonIteration || acc.chitWonMonth) {
+            const ok = await window.showPopup({
+                title: 'Change Won Month',
+                message: 'This customer already has a won month marked. Do you want to change it to this month?',
+                confirmText: 'Yes, Change It'
+            });
+            if (!ok) return;
+        }
+        acc.chitWonIteration = iterationNum;
+        delete acc.chitWonMonth;
+    }
+    
+    saveData();
+    openAccountPaymentManagement(custIdx, accIdx); // Refresh
+}
+
 // Exports
 window.handleFinanceClick = handleFinanceClick;
 window.openAccountPaymentManagement = openAccountPaymentManagement;
 window.togglePeriodPayment = togglePeriodPayment;
 window.addPeriodInterest = addPeriodInterest;
+window.toggleChitWon = toggleChitWon;
 
 // --- SYSTEM SETTINGS ---
 function openSettings() {
@@ -1911,7 +2107,10 @@ window.renderChitGroupsGrid = function() {
         
         div.innerHTML = `
             <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:15px;">
-                <h3 style="margin:0; font-size:1.1rem; color: var(--primary-color);">${group.name}</h3>
+                <div style="display:flex; align-items:center; gap: 8px;">
+                    <h3 style="margin:0; font-size:1.1rem; color: var(--primary-color);">${group.name}</h3>
+                    <button class="secondary-btn small" title="Delete Group" onclick="event.stopPropagation(); window.deleteChitGroup('${group.id}')" style="padding: 2px 6px; border:none; box-shadow:none; color: var(--danger-color); background: transparent; transform: none;"><i class="fa-solid fa-trash"></i></button>
+                </div>
                 <span style="font-size:0.7rem; padding:4px 8px; background:rgba(56,189,248,0.1); color:#38bdf8; border-radius:12px; font-weight:600;">₹${group.value.toLocaleString()} Pot</span>
             </div>
             <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 15px;">
@@ -1929,6 +2128,26 @@ window.renderChitGroupsGrid = function() {
         `;
         grid.appendChild(div);
     });
+};
+
+window.deleteChitGroup = async function(groupId) {
+    const groupIndex = (window.chitGroups || []).findIndex(g => g.id === groupId);
+    if (groupIndex === -1) return;
+    
+    const group = window.chitGroups[groupIndex];
+    
+    const ok = await window.showPopup({
+        title: 'Delete Chit Group',
+        message: `Are you sure you want to delete "${group.name}"? This action cannot be undone.`,
+        isDanger: true,
+        confirmText: 'Delete'
+    });
+    
+    if (ok) {
+        window.chitGroups.splice(groupIndex, 1);
+        saveData();
+        window.renderChitGroupsGrid();
+    }
 };
 
 window.showChitGroups = function() {
@@ -1968,9 +2187,73 @@ window.openAddGroupMemberModal = function() {
         return;
     }
     
+    window.selectedMembersToAdd = new Set();
+    window.updateAddSelectedMembersButton && window.updateAddSelectedMembersButton();
+    
     safeGet('member-search-input').value = '';
     window.filterMemberSelection();
     openModal('select-customer-modal');
+};
+
+window.addSelectedCustomersToGroup = function() {
+    const group = (window.chitGroups || []).find(g => g.id === window.currentChitGroupId);
+    if (!group) return;
+    if (!window.selectedMembersToAdd || window.selectedMembersToAdd.size === 0) return;
+    
+    if (group.memberIds.length + window.selectedMembersToAdd.size > group.members) {
+        window.showPopup({ type: 'alert', title: 'Group Size Limit', message: `Cannot add ${window.selectedMembersToAdd.size} members. Only ${group.members - group.memberIds.length} spots left in the group.` });
+        return;
+    }
+
+    let added = false;
+    window.selectedMembersToAdd.forEach(phone => {
+        if (!group.memberIds.includes(phone)) {
+            group.memberIds.push(phone);
+            added = true;
+            
+            const custIdx = customers.findIndex(c => c.phone === phone);
+            if (custIdx > -1) {
+                const cust = customers[custIdx];
+                if (!cust.financeAccounts) cust.financeAccounts = [];
+                
+                const exists = cust.financeAccounts.some(a => a.type === group.type && a.groupId === group.id);
+                if (!exists) {
+                    const newAcc = {
+                        uid: 'acc_' + Date.now() + '_' + Math.random().toString(36).substring(2,9),
+                        type: group.type,
+                        groupId: group.id,
+                        loanAmount: group.value,
+                        duration: group.members,
+                        monthlyDue: group.type.includes('Weekly') ? 0 : group.due,
+                        weeklyDue: group.type.includes('Weekly') ? group.due : 0,
+                        totalCustomers: group.members,
+                        startDate: new Date().toLocaleDateString('en-GB').split('/').reverse().join('-'),
+                        payments: {}
+                    };
+                    cust.financeAccounts.push(newAcc);
+                }
+            }
+        }
+    });
+
+    if (added) {
+        saveData();
+    }
+    
+    window.selectedMembersToAdd.clear();
+    closeModal('select-customer-modal');
+    window.renderGroupMembersTable(window.currentChitGroupId);
+};
+
+window.updateAddSelectedMembersButton = function() {
+    const btn = safeGet('add-selected-members-btn');
+    if (!btn) return;
+    if (window.selectedMembersToAdd && window.selectedMembersToAdd.size > 0) {
+        btn.style.display = 'block';
+        btn.innerText = `Add ${window.selectedMembersToAdd.size} Selected Member${window.selectedMembersToAdd.size > 1 ? 's' : ''}`;
+    } else {
+        btn.style.display = 'none';
+    }
 };
 
 window.filterMemberSelection = function() {
@@ -1982,7 +2265,7 @@ window.filterMemberSelection = function() {
     list.innerHTML = '';
     
     const available = customers.filter(c => {
-        const matchesSearch = c.name.toLowerCase().includes(query) || c.phone.includes(query);
+        const matchesSearch = c.name.toLowerCase().includes(query) || (c.phone || '').includes(query);
         const alreadyInGroup = (group.memberIds || []).includes(c.phone);
         return matchesSearch && !alreadyInGroup;
     });
@@ -2000,15 +2283,45 @@ window.filterMemberSelection = function() {
             div.style.justifyContent = 'space-between';
             div.style.alignItems = 'center';
             
+            const isChecked = window.selectedMembersToAdd && window.selectedMembersToAdd.has(c.phone);
+            
             div.innerHTML = `
-                <div>
-                    <div style="font-weight:600;">${c.name}</div>
-                    <div style="font-size:0.8rem; opacity:0.6;">${c.phone}</div>
+                <div style="display:flex; align-items:center; gap: 12px; width: 100%;">
+                    <input type="checkbox" id="add-member-check-${c.phone}" style="width: 18px; height: 18px; cursor: pointer;" ${isChecked ? 'checked' : ''}>
+                    <label for="add-member-check-${c.phone}" style="cursor: pointer; margin: 0; flex: 1;">
+                        <div style="font-weight:600;">${c.name}</div>
+                        <div style="font-size:0.8rem; opacity:0.6;">${c.phone}</div>
+                    </label>
                 </div>
-                <button class="primary-btn small" style="padding:4px 12px; font-size:0.75rem;">Add Member</button>
             `;
             
-            div.onclick = () => window.addCustomerToGroup(c.phone);
+            const checkbox = div.querySelector('input');
+            div.onclick = (e) => {
+                if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'LABEL') {
+                    checkbox.checked = !checkbox.checked;
+                }
+                setTimeout(() => {
+                    if (!window.selectedMembersToAdd) window.selectedMembersToAdd = new Set();
+                    if (checkbox.checked) {
+                        window.selectedMembersToAdd.add(c.phone);
+                    } else {
+                        window.selectedMembersToAdd.delete(c.phone);
+                    }
+                    window.updateAddSelectedMembersButton();
+                }, 0);
+            };
+            
+            checkbox.onchange = (e) => {
+                e.stopPropagation();
+                if (!window.selectedMembersToAdd) window.selectedMembersToAdd = new Set();
+                if (checkbox.checked) {
+                    window.selectedMembersToAdd.add(c.phone);
+                } else {
+                    window.selectedMembersToAdd.delete(c.phone);
+                }
+                window.updateAddSelectedMembersButton();
+            };
+
             list.appendChild(div);
         });
     }

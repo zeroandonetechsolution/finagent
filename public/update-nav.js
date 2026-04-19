@@ -12,6 +12,7 @@ const newNavTemplate = `          <nav>
             <a href="weeklycust.html" class="nav-btn __weeklycust__"><i class="fa-solid fa-calendar-week"></i> Weekly Finance</a>
             <a href="monthlycust.html" class="nav-btn __monthlycust__"><i class="fa-solid fa-calendar-days"></i> Monthly Finance</a>
             <a href="monthlyinterest.html" class="nav-btn __monthlyinterest__"><i class="fa-solid fa-hand-holding-dollar"></i> Monthly Interest</a>
+            <a href="weeklyinterest.html" class="nav-btn __weeklyinterest__"><i class="fa-solid fa-hand-dots"></i> Weekly Interest</a>
             
             <div class="nav-label" style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin: 15px 0 5px 10px; opacity: 0.7; font-weight: 600;">Savings</div>
             <a href="diwalichit.html" class="nav-btn __diwalichit__"><i class="fa-solid fa-burst"></i> Diwali Chit</a>

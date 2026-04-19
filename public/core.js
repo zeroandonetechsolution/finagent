@@ -1,4 +1,4 @@
-﻿// --- GLOBAL UTILITIES ---
+// --- GLOBAL UTILITIES ---
 const safeGet = (id) => document.getElementById(id);
 
 // --- SUPABASE CONFIG ---
@@ -122,6 +122,23 @@ async function injectModals() {
 
 // Start injecting modals immediately - do not wait for DOMContentLoaded
 injectModals();
+
+// --- BACKGROUND SHAPE INJECTOR ---
+function injectBackgroundShapes() {
+    const shapesHTML = `
+        <div class="bg-shape shape-1"></div>
+        <div class="bg-shape shape-2"></div>
+        <div class="bg-shape shape-3"></div>
+    `;
+    const div = document.createElement('div');
+    div.innerHTML = shapesHTML;
+    if (document.body) {
+        document.body.prepend(div);
+    } else {
+        document.addEventListener('DOMContentLoaded', () => document.body.prepend(div));
+    }
+}
+injectBackgroundShapes();
 
 // After DOM ready: run page-specific UI + background Supabase sync
 document.addEventListener('DOMContentLoaded', () => {
