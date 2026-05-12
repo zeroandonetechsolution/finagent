@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Clearing Data...</title>
+</head>
+<body>
+    <h2 style="font-family: sans-serif; text-align: center; margin-top: 50px;">Clearing all user and admin data...</h2>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="core.js"></script>
+    <script>
+        // Wait briefly to ensure core.js has initialized Supabase
+        setTimeout(async () => {
+            // 1. Clear Local Storage
+            localStorage.clear();
+            
+            // 2. Clear Supabase Data (if connected)
+            if (window._supabase) {
+                try {
+                    await window._supabase.from('app_state').update({ customers: [], groups: [] }).eq('id', 'global_state');
+                } catch (e) {
+                    console.error("Supabase wipe failed", e);
+                }
+            }
+            
+            alert("Success! All user data has been completely erased from both your browser and the database.");
+            window.location.href = 'index.html';
+        }, 1500);
+    </script>
+</body>
+</html>

@@ -2,8 +2,8 @@
 const safeGet = (id) => document.getElementById(id);
 
 // --- SUPABASE CONFIG ---
-const SUPABASE_URL = 'https://qrrblhuuutqrhgsowsrkr.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFycmJsaHV1dHFyaGdzb3dzcmtyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4MDAxNzQsImV4cCI6MjA5MDM3NjE3NH0.Sz77MlxoVSTpHJIS5VVDnGU3DPx-KlFYEGMkv2SLWw4';
+const SUPABASE_URL = 'https://lstgghvxybcrgbmswbca.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_n_gqmwlK-4zq2PxjJffBFA_SI_LfmLV';
 
 let _supabase = null;
 

@@ -71,7 +71,7 @@
       async function loginAgent() {
         const u = document.getElementById('admin-username').value;
         const p = document.getElementById('admin-password').value;
-        if (u === 'nagaraj' && p === '123456') {
+        if (u === 'nagaraj' && p === 'nagaraj') {
           localStorage.setItem('finagent_user', JSON.stringify({ role: 'admin', name: 'Nagaraj' }));
           window.location.href = 'admin.html';
         } else {
