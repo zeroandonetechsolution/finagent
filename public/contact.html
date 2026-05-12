@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - FinAgent Pro</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        .legal-container {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 40px;
+            background: var(--surface-color);
+            border-radius: 24px;
+            box-shadow: var(--glass-shadow);
+            line-height: 1.6;
+        }
+        .legal-header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 2px solid var(--bg-gradient);
+            padding-bottom: 20px;
+        }
+        .legal-header h1 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        .contact-card {
+            background: var(--bg-gradient);
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+        .contact-card i {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        .contact-card h3 {
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        .contact-card p {
+            color: var(--text-secondary);
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 700;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        .footer-links {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .footer-links a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="legal-container">
+            <div class="legal-header">
+                <h1>Contact Us</h1>
+                <p>We're here to help you with your financial management needs.</p>
+            </div>
+            
+            <div class="contact-grid">
+                <div class="contact-card">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <h3>Our Office</h3>
+                    <p>[Your Registered Business Address Here]<br>Tamil Nadu, India</p>
+                </div>
+                <div class="contact-card">
+                    <i class="fa-solid fa-phone"></i>
+                    <h3>Phone</h3>
+                    <p>+91 [Your Phone Number]</p>
+                </div>
+                <div class="contact-card">
+                    <i class="fa-solid fa-envelope"></i>
+                    <h3>Email</h3>
+                    <p>support@finagentpro.com</p>
+                </div>
+            </div>
+
+            <div style="margin-top: 40px; background: rgba(0,0,0,0.05); padding: 30px; border-radius: 20px;">
+                <h3>Operating Hours</h3>
+                <p style="margin-top: 10px; color: var(--text-secondary);">Monday to Saturday: 9:00 AM - 7:00 PM<br>Sunday: Closed</p>
+            </div>
+
+            <a href="javascript:history.back()" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back</a>
+        </div>
+        
+        <footer>
+            <p>&copy; 2026 FinAgent Pro. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="terms.html">Terms &amp; Conditions</a>
+                <a href="refund.html">Refund &amp; Cancellation</a>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

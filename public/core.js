@@ -140,6 +140,38 @@ function injectBackgroundShapes() {
 }
 injectBackgroundShapes();
 
+// --- LEGAL FOOTER INJECTOR ---
+const _POLICY_PAGES = ['privacy.html', 'terms.html', 'refund.html', 'contact.html', 'shipping.html'];
+const _currentPage  = window.location.pathname.split('/').pop() || 'index.html';
+
+function injectFooter() {
+    if (_POLICY_PAGES.includes(_currentPage)) return; // policy pages have their own footers
+
+    const footer = document.createElement('footer');
+    footer.className = 'app-global-footer';
+    footer.innerHTML = `
+        <div class="app-footer-inner">
+            <div class="app-footer-links">
+                <a href="privacy.html"><i class="fa-solid fa-shield-halved"></i> Privacy Policy</a>
+                <a href="terms.html"><i class="fa-solid fa-file-lines"></i> Terms &amp; Conditions</a>
+                <a href="refund.html"><i class="fa-solid fa-rotate-left"></i> Refund &amp; Cancellation</a>
+                <a href="contact.html"><i class="fa-solid fa-headset"></i> Contact Us</a>
+            </div>
+            <p class="app-footer-copy">&copy; 2026 FinAgent Pro &mdash; Secure Chit Fund &amp; Finance Management</p>
+        </div>
+    `;
+
+    const inject = () => {
+        const main = document.querySelector('.main-content');
+        if (main) { main.appendChild(footer); return; }
+        document.body.appendChild(footer);
+    };
+
+    if (document.body) inject();
+    else document.addEventListener('DOMContentLoaded', inject);
+}
+injectFooter();
+
 // After DOM ready: run page-specific UI + background Supabase sync
 document.addEventListener('DOMContentLoaded', () => {
     if (typeof loadAdminData          === 'function') loadAdminData();
